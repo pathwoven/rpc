@@ -1,0 +1,49 @@
+# 编译生成文件
+*.o
+*.a
+*.so
+*.dll
+*.exe
+*.out
+*.ilk
+*.pdb
+
+# 构建目录
+build/
+out/
+bin/
+obj/
+CMakeCache.txt
+CMakeFiles/
+Makefile
+.ninja_deps
+.ninja_log
+
+# IDE/编辑器文件
+.vscode/
+.vs/
+.idea/
+*.sln
+*.vcxproj*
+*.user
+*.suo
+*.swp
+*~
+*.swo
+
+# 依赖项目录
+deps/
+third_party/
+
+# 系统文件
+.DS_Store
+Thumbs.db
+
+# 测试/调试文件
+*.log
+*.gcno
+*.gcda
+
+# Protocol Buffers生成文件
+*.pb.cc
+*.pb.h
