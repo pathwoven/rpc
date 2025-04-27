@@ -1,6 +1,6 @@
 #include "include/ServerStub.h"
 
-void ServerStub::SaveServiceInfo(google::protobuf::Service* service){
+void ServerStub::saveServiceInfo(google::protobuf::Service* service){
     // 记录服务信息
     ServiceInfo serviceInfo;
     serviceInfo.service = service;
@@ -16,12 +16,11 @@ void ServerStub::SaveServiceInfo(google::protobuf::Service* service){
     this->serviceMap.emplace(serviceDescr->name(), serviceInfo);
 }
 
-void ServerStub::RegisterAllService(){
-    
+void ServerStub::registerAllService(){
 }
 
 // 启动节点
-void ServerStub::Run(){
+void ServerStub::run(){
     // todo 修改为从配置文件读入
     std::string ip = "127.0.0.1";
     int port = 8085;
@@ -29,8 +28,10 @@ void ServerStub::Run(){
 
     std::unique_ptr<TCPServer> tcpServer = std::make_unique<MuduoServer>();
 
-    tcpServer->BindListen(ip, port, name);
-    tcpServer->SetThreadNum(4);
+    tcpServer->bindListen(ip, port, name);
+    tcpServer->setThreadNum(4);
 
-    tcpServer->Run();
+    registerAllService();
+
+    tcpServer->run();
 }

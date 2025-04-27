@@ -1,7 +1,7 @@
 #include "MuduoServer.h"
 #include<iostream>
 
-void MuduoServer::BindListen(std::string ip, int port, std::string name=""){
+void MuduoServer::bindListen(std::string ip, int port, std::string name=""){
     // 创建地址对象
     muduo::net::InetAddress addr(ip, port);
     // 创建server
@@ -10,7 +10,7 @@ void MuduoServer::BindListen(std::string ip, int port, std::string name=""){
     
 }
 
-void MuduoServer::SetConnCallback(void (*OnConn())){
+void MuduoServer::setConnCallback(void (*OnConn())){
     
 }
 void OnConnection(const muduo::net::TcpConnectionPtr& conn){
@@ -22,11 +22,11 @@ void OnMessage(const muduo::net::TcpConnectionPtr& conn, muduo::net::Buffer* buf
     std::cout << "receive message" << std::endl;  // todo
 }
 
-void MuduoServer::SetThreadNum(int num){
+void MuduoServer::setThreadNum(int num){
     server->setThreadNum(num);
 }
 
-void MuduoServer::Run(){
+void MuduoServer::run(){
     server->setConnectionCallback(std::bind(&OnConnection, this, std::placeholders::_1));
     server->setMessageCallback(std::bind(&OnMessage, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3));
 

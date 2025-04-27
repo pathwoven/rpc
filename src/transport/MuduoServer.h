@@ -7,11 +7,11 @@
 #include <muduo/net/TcpServer.h>
 class MuduoServer: public TCPServer{
 public:
-    void BindListen(std::string ip, int port, std::string name="") override;
-    void SetConnCallback(void (*OnConnection())) override;
-    void SetMessCallback(void (*OnMessage())) override;
-    void SetThreadNum(int num) override;
-    void Run() override;
+    void bindListen(std::string ip, int port, std::string name="") override;
+    void setConnCallback(void (*OnConnection())) override;
+    void setMessCallback(void (*OnMessage())) override;
+    void setThreadNum(int num) override;
+    void run() override;
 private:
     muduo::net::EventLoop eventLoop;
     std::shared_ptr<muduo::net::TcpServer> server;

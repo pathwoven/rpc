@@ -3,10 +3,10 @@
 #include <string>
 class TCPServer{
 public:
-    virtual void BindListen(std::string ip, int port, std::string name="");
-    virtual void SetConnCallback(void (*OnConnection()));
-    virtual void SetMessCallback(void (*OnMessage()));
-    virtual void SetThreadNum(int n);
-    virtual void Run();
+    virtual void bindListen(std::string ip, int port, std::string name="");
+    virtual void setConnCallback(void (*OnConnection()));
+    virtual void setMessCallback(void (*OnMessage()));
+    virtual void setThreadNum(int n);
+    virtual void run();
 };
 #endif TCP_SERVER_H  // TCP_SERVER_H
