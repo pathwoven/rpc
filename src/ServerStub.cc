@@ -1,5 +1,36 @@
 #include "include/ServerStub.h"
 
-void ServerStub::RegisterService(google::protobuf::Service* service){
+void ServerStub::SaveServiceInfo(google::protobuf::Service* service){
+    // 记录服务信息
+    ServiceInfo serviceInfo;
+    serviceInfo.service = service;
     
+    const google::protobuf::ServiceDescriptor* serviceDescr = service->GetDescriptor();
+    // 遍历服务的方法，记录方法名与描述符的映射
+    for(int i=0; i<serviceDescr->method_count(); i++){
+        const google::protobuf::MethodDescriptor* methodDescr = serviceDescr->method(i);
+        serviceInfo.methodMap.emplace(methodDescr->name(), methodDescr);
+    }
+
+    // 保存
+    this->serviceMap.emplace(serviceDescr->name(), serviceInfo);
+}
+
+void ServerStub::RegisterAllService(){
+    
+}
+
+// 启动节点
+void ServerStub::Run(){
+    // todo 修改为从配置文件读入
+    std::string ip = "127.0.0.1";
+    int port = 8085;
+    std::string name = "Server";
+
+    std::unique_ptr<TCPServer> tcpServer = std::make_unique<MuduoServer>();
+
+    tcpServer->BindListen(ip, port, name);
+    tcpServer->SetThreadNum(4);
+
+    tcpServer->Run();
 }

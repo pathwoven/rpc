@@ -1,12 +1,24 @@
 #ifndef SERVER_STUB_H
 #define SERVER_STUB_H
 #include "google/protobuf/service.h"
+#include "google/protobuf/descriptor.h"
+#include "transport/MuduoServer.h"
+#include <map>
 class ServerStub {
 public:
-	// 注册方法，保存映射
-	void RegisterService(google::protobuf::Service* service);
+	// 保存该服务的信息
+	void SaveServiceInfo(google::protobuf::Service* service);
+	// 注册服务到注册中心
+	void RegisterAllService();
 	// 启动服务器节点，开始提供rpc服务
 	void Run();
 private:
+	// 存储单个服务内部方法名与方法的映射映射的结构
+	struct ServiceInfo{
+		google::protobuf::Service* service;
+		std::unordered_map<std::string, google::protobuf::MethodDescriptor*> methodMap;
+	};
+	// 存储服务名与服务信息的映射
+	std::unordered_map<std::string, ServiceInfo> serviceMap;
 };
 #endif SERVER_STUB_H   // SERVER_STUB_H
