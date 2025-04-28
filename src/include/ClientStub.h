@@ -4,7 +4,7 @@
 class ClientStub {
 public: 
     void connect(std::string ip, int port);
-    void findService();
+    void findService(std::string method);
 private:
 
 };

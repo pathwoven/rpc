@@ -16,7 +16,19 @@ void ServerStub::saveServiceInfo(google::protobuf::Service* service){
     this->serviceMap.emplace(serviceDescr->name(), serviceInfo);
 }
 
-void ServerStub::registerAllService(){
+void ServerStub::registerAllService(std::string ip, int port){
+    // 服务端地址
+    std::string addr =  ip+":"+std::to_string(port);
+    // 连接注册中心
+    std::unique_ptr<RegisterCli> registerCli = std::make_unique<ZkClient>();
+    registerCli->start();
+    for(auto it = serviceMap.begin();it!=serviceMap.end();it++){
+        std::string serviceName = it->first;
+        registerCli->registerService(serviceName);   // 注册服务
+        for(auto m_it = it->second.methodMap.begin();m_it!=it->second.methodMap.end();m_it++){
+            registerCli->registerMethod(serviceName, m_it->first, addr);  // 注册方法
+        }
+    }
 }
 
 // 启动节点
@@ -31,7 +43,7 @@ void ServerStub::run(){
     tcpServer->bindListen(ip, port, name);
     tcpServer->setThreadNum(4);
 
-    registerAllService();
+    registerAllService(ip, port);
 
     tcpServer->run();
 }
