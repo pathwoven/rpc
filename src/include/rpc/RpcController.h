@@ -1,6 +1,6 @@
 #ifndef CONTROLLER_H
 #include "google/protobuf/service.h"
-class Controller: public google::protobuf::RpcController{
+class RpcController: public google::protobuf::RpcController{
 public:
 
 };

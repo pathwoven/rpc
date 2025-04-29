@@ -3,8 +3,9 @@
 #include "google/protobuf/service.h"
 #include "google/protobuf/descriptor.h"
 #include "ZkClient.h"
+#include "TCPClient.h"
 
-class Channel: public google::protobuf::RpcChannel{
+class RpcChannel: public google::protobuf::RpcChannel{
 public:
     // 调用远程方法
     void CallMethod(const google::protobuf::MethodDescriptor* method,
@@ -12,12 +13,12 @@ public:
                           const google::protobuf::Message* request,
                           google::protobuf::Message* response, 
                           google::protobuf::Closure* done) override;
-    Channel();
-    ~Channel(){}
+    RpcChannel();
+    ~RpcChannel(){}
 private:
     std::string findService(std::string service);   // 返回服务的地址
 
-    std::unique_ptr<RegisterCli> registerCli;
-    std::unordered_map<std::string, std::string> serviceMap;  // 服务名与服务地址的映射
+    std::unique_ptr<RegistryCli> RegistryCli;
+    std::unordered_map<std::string, std::unique_ptr<TCPClient>> serviceMap;  // 服务名与tcp连接的映射
 };
 #endif CHANNEL_H  // CHANNEL_H

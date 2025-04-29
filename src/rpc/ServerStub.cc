@@ -1,4 +1,4 @@
-#include "include/ServerStub.h"
+#include "ServerStub.h"
 
 void ServerStub::saveServiceInfo(google::protobuf::Service* service){
     // 记录服务信息
@@ -20,13 +20,13 @@ void ServerStub::registerAllService(std::string ip, int port){
     // 服务端地址
     std::string addr =  ip+":"+std::to_string(port);
     // 连接注册中心
-    std::unique_ptr<RegisterCli> registerCli = std::make_unique<ZkClient>();
-    registerCli->start();
+    std::unique_ptr<RegistryCli> RegistryCli = std::make_unique<ZkClient>();
+    RegistryCli->start();
     for(auto it = serviceMap.begin();it!=serviceMap.end();it++){
         std::string serviceName = it->first;
-        registerCli->registerService(serviceName, addr);   // 注册服务
+        RegistryCli->registerService(serviceName, addr);   // 注册服务
         // for(auto m_it = it->second.methodMap.begin();m_it!=it->second.methodMap.end();m_it++){
-        //     registerCli->registerMethod(serviceName, m_it->first, addr);  // 注册方法
+        //     RegistryCli->registerMethod(serviceName, m_it->first, addr);  // 注册方法
         // }
     }
 }

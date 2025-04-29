@@ -2,8 +2,8 @@
 #define SERVER_STUB_H
 #include "google/protobuf/service.h"
 #include "google/protobuf/descriptor.h"
-#include "transport/MuduoServer.h"
-#include "RegisterCenter/ZkClient.h"
+#include "MuduoServer.h"
+#include "ZkClient.h"
 #include <map>
 class ServerStub {
 public:

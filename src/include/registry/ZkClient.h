@@ -1,8 +1,8 @@
 #ifndef ZK_CLIENT_H
 #define ZK_CLIENT_H
-#include "RegisterClient.h"
+#include "RegistryClient.h"
 #include "zookeeper/zookeeper.h"
-class ZkClient: public RegisterCli{
+class ZkClient: public RegistryCli{
 public:
     ZkClient();
     ~ZkClient();

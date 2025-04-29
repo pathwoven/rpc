@@ -47,3 +47,4 @@ Thumbs.db
 # Protocol Buffers生成文件
 *.pb.cc
 *.pb.h
+generated/
