@@ -7,7 +7,7 @@
 #include "google/protobuf/service.h"
 class RegisterCli{
 public:
-    virtual void registerService(std::string service);
+    virtual void registerService(std::string service, std::string addr);
     virtual void registerMethod(std::string service, std::string method, std::string data="");
     virtual std::string findService(std::string service);
     virtual void start();

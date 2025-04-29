@@ -27,10 +27,13 @@ void ZkClient::createNode(const char* path, const char* value, int valueLen, int
     }
 }
 
-void ZkClient::registerService(std::string service){
-    std::string path = "/" + service;
+void ZkClient::registerService(std::string service, std::string addr){
+    std::string path = "/services/" + service;
     // 服务节点为持久节点，因为服务节点表示服务的名称或分类，一般不会改变
     createNode(path.c_str(), nullptr, 0, 0);
+    // 保存服务器的地址为临时节点
+    path+="/"+addr;
+    createNode(path.c_str(), nullptr, 0, 0); 
 }
 
 void ZkClient::registerMethod(std::string service, std::string method, std::string data){

@@ -24,10 +24,10 @@ void ServerStub::registerAllService(std::string ip, int port){
     registerCli->start();
     for(auto it = serviceMap.begin();it!=serviceMap.end();it++){
         std::string serviceName = it->first;
-        registerCli->registerService(serviceName);   // 注册服务
-        for(auto m_it = it->second.methodMap.begin();m_it!=it->second.methodMap.end();m_it++){
-            registerCli->registerMethod(serviceName, m_it->first, addr);  // 注册方法
-        }
+        registerCli->registerService(serviceName, addr);   // 注册服务
+        // for(auto m_it = it->second.methodMap.begin();m_it!=it->second.methodMap.end();m_it++){
+        //     registerCli->registerMethod(serviceName, m_it->first, addr);  // 注册方法
+        // }
     }
 }
 

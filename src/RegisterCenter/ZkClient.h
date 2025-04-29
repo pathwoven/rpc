@@ -7,7 +7,7 @@ public:
     ZkClient();
     ~ZkClient();
     void start()override;
-    void registerService(std::string service) override;
+    void registerService(std::string service, std::string addr) override;
     void registerMethod(std::string service, std::string method, std::string data="") override;
     std::string findService(std::string service)override;
 private:
