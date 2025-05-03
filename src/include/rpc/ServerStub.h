@@ -2,6 +2,7 @@
 #define SERVER_STUB_H
 #include "google/protobuf/service.h"
 #include "google/protobuf/descriptor.h"
+#include "RpcHeader.pb.h"
 #include "MuduoServer.h"
 #include "ZkClient.h"
 #include <map>
@@ -21,6 +22,10 @@ private:
 		std::unordered_map<std::string, google::protobuf::MethodDescriptor*> methodMap;
 	};
 	// 存储服务名与服务信息的映射
-	std::unordered_map<std::string, ServiceInfo> serviceMap;
+	std::unordered_map<std::string, ServiceInfo> serviceMap_;
+
+	void OnMessage(const std::string& header, const std::string& msg);
+	std::function<void(std::string&,std::string&,void*)> sendCb_;
+	void SendMessage(google::protobuf::Message* res);
 };
 #endif SERVER_STUB_H   // SERVER_STUB_H

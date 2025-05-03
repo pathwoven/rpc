@@ -8,21 +8,22 @@ void RpcChannel::CallMethod(const google::protobuf::MethodDescriptor* method,
                           google::protobuf::Closure* done)
 {
     std::string serviceName = method->service()->name();
-
-    auto sm = serviceMap.find(serviceName);
-    // 假如此前没有建立连接
-    if( sm == serviceMap.end()){
-        // 建立连接 todo
-        // 查询服务
-        std::string addr = findService(serviceName);
-    }else{
-
+    if(serviceName_!=serviceName){   // 需要建立新连接
+        serviceName_ = serviceName;
+        std::string addr = findService(serviceName_);
+        newConnect(addr);
     }
-
+    
+    // 封装数据
 }
 
 RpcChannel::RpcChannel(){
     RegistryCli = nullptr;
+    serviceName_ = "";
+}
+
+void RpcChannel::newConnect(std::string addr){
+    
 }
 
 std::string RpcChannel::findService(std::string service){

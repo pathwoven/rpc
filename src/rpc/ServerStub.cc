@@ -13,7 +13,7 @@ void ServerStub::saveServiceInfo(google::protobuf::Service* service){
     }
 
     // 保存
-    this->serviceMap.emplace(serviceDescr->name(), serviceInfo);
+    this->serviceMap_.emplace(serviceDescr->name(), serviceInfo);
 }
 
 void ServerStub::registerAllService(std::string ip, int port){
@@ -22,13 +22,48 @@ void ServerStub::registerAllService(std::string ip, int port){
     // 连接注册中心
     std::unique_ptr<RegistryCli> RegistryCli = std::make_unique<ZkClient>();
     RegistryCli->start();
-    for(auto it = serviceMap.begin();it!=serviceMap.end();it++){
+    for(auto it = serviceMap_.begin();it!=serviceMap_.end();it++){
         std::string serviceName = it->first;
         RegistryCli->registerService(serviceName, addr);   // 注册服务
         // for(auto m_it = it->second.methodMap.begin();m_it!=it->second.methodMap.end();m_it++){
         //     RegistryCli->registerMethod(serviceName, m_it->first, addr);  // 注册方法
         // }
     }
+}
+
+void ServerStub::OnMessage(const std::string& header, const std::string& msg){
+    RpcHeader::RequestHeader rpcHeader;
+    google::protobuf::Service* service;
+    google::protobuf::MethodDescriptor* mDesc;
+    // 读取头部
+    if(rpcHeader.ParseFromString(header)){
+        auto sm = serviceMap_.find(rpcHeader.service());
+        if(sm==serviceMap_.end()){
+            // todo 错误
+        }
+        service = sm->second.service;
+        auto mm = sm->second.methodMap.find(rpcHeader.method());
+        if(mm==sm->second.methodMap.end()){
+            // todo
+        }
+        mDesc = mm->second;
+    }else{
+        // todo 参数错误
+    }
+    // 读取rpc体
+    google::protobuf::Message* request = service->GetRequestPrototype(mDesc).New();
+    if(!request->ParseFromString(msg)){
+    // todo
+    }
+    google::protobuf::Message* response = service->GetResponsePrototype(mDesc).New();
+    // 定义回调函数
+    // todo
+    service->CallMethod(mDesc, nullptr, request, response, nullptr);
+    
+}
+
+void ServerStub::SendMessage(google::protobuf::Message* res){
+
 }
 
 // 启动节点
@@ -38,12 +73,17 @@ void ServerStub::run(){
     int port = 8085;
     std::string name = "Server";
 
-    std::unique_ptr<TCPServer> tcpServer = std::make_unique<MuduoServer>();
+    registerAllService(ip, port);
+
+    // 启动tcp服务
+    std::unique_ptr<MuduoServer> tcpServer = std::make_unique<MuduoServer>();
 
     tcpServer->bindListen(ip, port, name);
     tcpServer->setThreadNum(4);
 
-    registerAllService(ip, port);
+    // 设置回调函数
+    tcpServer->setMessCallback(std::bind(&OnMessage, this, std::placeholders::_1, std::placeholders::_2));
+    tcpServer->setSendCallback(sendCb_);
 
     tcpServer->run();
 }

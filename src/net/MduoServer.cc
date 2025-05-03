@@ -5,7 +5,7 @@ void MuduoServer::bindListen(std::string ip, int port, std::string name=""){
     // 创建地址对象
     muduo::net::InetAddress addr(ip, port);
     // 创建server
-    server = std::make_shared<muduo::net::TcpServer>(&eventLoop, addr, name);
+    server_ = std::make_shared<muduo::net::TcpServer>(&eventLoop_, addr, name);
 
     
 }
@@ -13,23 +13,63 @@ void MuduoServer::bindListen(std::string ip, int port, std::string name=""){
 void MuduoServer::setConnCallback(void (*OnConn())){
     
 }
-void OnConnection(const muduo::net::TcpConnectionPtr& conn){
+void MuduoServer::OnConnection(const muduo::net::TcpConnectionPtr& conn){
     if(!conn->connected()){
         conn->shutdown();   // 断开连接
     }
 }
-void OnMessage(const muduo::net::TcpConnectionPtr& conn, muduo::net::Buffer* buffer, muduo::Timestamp receiveTime){
-    std::cout << "receive message" << std::endl;  // todo
+
+// 消息回调
+void MuduoServer::setMessCallback(std::function<void(std::string&, std::string&)> cb){
+    messCb_ = std::move(cb);
+}
+void MuduoServer::OnMessage(const muduo::net::TcpConnectionPtr& conn, muduo::net::Buffer* buffer, muduo::Timestamp receiveTime){
+    
+    while(buffer->readableBytes()>4){
+        const char* data = buffer->peek();
+        // 读取头部长度
+        uint32_t headerSize = ntohl(*reinterpret_cast<const u_int32_t*>(data));
+        if(buffer->readableBytes() < headerSize + 4) break;   // 不完整
+        // 读取体的长度
+        data += 4 + headerSize;
+        uint32_t bodySize = ntohl(*reinterpret_cast<const u_int32_t*>(data));
+        if(buffer->readableBytes() < headerSize + bodySize + 8) break;  // 不完整，等待下次调用
+
+        // 读取头部
+        buffer->retrieve(4);   // 跳过头部长度
+        std::string header(buffer->peek(), headerSize);
+        buffer->retrieve(headerSize);
+
+        // 读取rpc体
+        buffer->retrieve(4);
+        std::string message(buffer->peek(), bodySize);
+        buffer->retrieve(bodySize);
+
+        messCb_(header, message);
+    }
+}
+
+void MuduoServer::setSendCallback(std::function<void(std::string&,std::string&,void*)>& sendCb){
+    sendCb = [this](std::string& header, std::string& msg, void* cxt){
+        muduo::net::TcpConnection* conn = static_cast<muduo::net::TcpConnection*>(cxt);
+        this->SendMessage(header, msg, &muduo::net::TcpConnectionPtr(conn));
+    };
+}
+void MuduoServer::SendMessage(std::string& header, std::string& body, muduo::net::TcpConnectionPtr* conn){
+    std::string message="";
+    if(header!=""){
+        
+    }
 }
 
 void MuduoServer::setThreadNum(int num){
-    server->setThreadNum(num);
+    server_->setThreadNum(num);
 }
 
 void MuduoServer::run(){
-    server->setConnectionCallback(std::bind(&OnConnection, this, std::placeholders::_1));
-    server->setMessageCallback(std::bind(&OnMessage, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3));
+    server_->setConnectionCallback(std::bind(&OnConnection, this, std::placeholders::_1));
+    server_->setMessageCallback(std::bind(&OnMessage, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3));
 
-    server->start();
-    eventLoop.loop();
+    server_->start();
+    eventLoop_.loop();
 }
