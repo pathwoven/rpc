@@ -14,10 +14,20 @@ void RpcChannel::CallMethod(const google::protobuf::MethodDescriptor* method,
         newConnect(addr);
     }
     
-    // 封装数据
     std::string methodName = method->name();
     // 封装头部
-    
+    RpcHeader::RequestHeader requestHeader;
+    requestHeader.set_service(serviceName);
+    requestHeader.set_method(methodName);
+    // 序列化
+    std::string header, body;
+    if(!requestHeader.SerializeToString(&header)){
+        // todo error
+    }
+    if(!request->SerializeToString(&body)){
+        // todo error
+    }
+
 }
 
 RpcChannel::RpcChannel(){
@@ -26,7 +36,10 @@ RpcChannel::RpcChannel(){
 }
 
 void RpcChannel::newConnect(std::string addr){
-    
+    // 需要确保addr一定是ip:port的形式
+    size_t idx = addr.find(':');
+    std::string ip = addr.substr(0, idx);
+    std::string port = addr.substr(idx+1);
 }
 
 std::string RpcChannel::findService(std::string service){

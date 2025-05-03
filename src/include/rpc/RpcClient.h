@@ -5,8 +5,9 @@
 #include <unordered_map>
 class RpcClient {
 public: 
-    // 从池中获取一个某服务对应的RpcChannel，并返回一个stub给客户
-    RpcChannel* getStub(std::string service);
+    // 从池中获取一个连接，创建stub，并返回给客户
+    template <typename StubType>
+    std::shared_ptr<StubType> getStub(std::string service);
 private:
 
 };

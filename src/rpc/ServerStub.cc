@@ -64,7 +64,7 @@ void ServerStub::OnMessage(const std::string& header, const std::string& msg, vo
 
 void ServerStub::SendMessage(google::protobuf::Message* res, void* cxt){
     std::string response;
-    if(!res->SerializePartialToString(&response)){
+    if(!res->SerializeToString(&response)){
         // todo
     }
     std::string header = "";
