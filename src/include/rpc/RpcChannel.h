@@ -2,6 +2,7 @@
 #define CHANNEL_H
 #include "google/protobuf/service.h"
 #include "google/protobuf/descriptor.h"
+#include "RpcHeader.pb.h"
 #include "ZkClient.h"
 #include "TCPClient.h"
 

@@ -31,7 +31,7 @@ void ServerStub::registerAllService(std::string ip, int port){
     }
 }
 
-void ServerStub::OnMessage(const std::string& header, const std::string& msg){
+void ServerStub::OnMessage(const std::string& header, const std::string& msg, void* cxt){
     RpcHeader::RequestHeader rpcHeader;
     google::protobuf::Service* service;
     google::protobuf::MethodDescriptor* mDesc;
@@ -53,17 +53,22 @@ void ServerStub::OnMessage(const std::string& header, const std::string& msg){
     // 读取rpc体
     google::protobuf::Message* request = service->GetRequestPrototype(mDesc).New();
     if(!request->ParseFromString(msg)){
-    // todo
+    // todo error
     }
     google::protobuf::Message* response = service->GetResponsePrototype(mDesc).New();
     // 定义回调函数
-    // todo
-    service->CallMethod(mDesc, nullptr, request, response, nullptr);
+    google::protobuf::Closure* done = google::protobuf::NewCallback(this, &SendMessage, response, cxt);
+    service->CallMethod(mDesc, nullptr, request, response, done);
     
 }
 
-void ServerStub::SendMessage(google::protobuf::Message* res){
-
+void ServerStub::SendMessage(google::protobuf::Message* res, void* cxt){
+    std::string response;
+    if(!res->SerializePartialToString(&response)){
+        // todo
+    }
+    std::string header = "";
+    sendCb_(header, response, cxt);
 }
 
 // 启动节点
@@ -82,7 +87,7 @@ void ServerStub::run(){
     tcpServer->setThreadNum(4);
 
     // 设置回调函数
-    tcpServer->setMessCallback(std::bind(&OnMessage, this, std::placeholders::_1, std::placeholders::_2));
+    tcpServer->setMessCallback(std::bind(&OnMessage, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3));
     tcpServer->setSendCallback(sendCb_);
 
     tcpServer->run();

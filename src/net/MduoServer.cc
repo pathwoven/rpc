@@ -20,7 +20,7 @@ void MuduoServer::OnConnection(const muduo::net::TcpConnectionPtr& conn){
 }
 
 // 消息回调
-void MuduoServer::setMessCallback(std::function<void(std::string&, std::string&)> cb){
+void MuduoServer::setMessCallback(std::function<void(std::string&, std::string&, void*)> cb){
     messCb_ = std::move(cb);
 }
 void MuduoServer::OnMessage(const muduo::net::TcpConnectionPtr& conn, muduo::net::Buffer* buffer, muduo::Timestamp receiveTime){
@@ -45,21 +45,29 @@ void MuduoServer::OnMessage(const muduo::net::TcpConnectionPtr& conn, muduo::net
         std::string message(buffer->peek(), bodySize);
         buffer->retrieve(bodySize);
 
-        messCb_(header, message);
+        messCb_(header, message, static_cast<void*>(conn.get()));
     }
 }
 
 void MuduoServer::setSendCallback(std::function<void(std::string&,std::string&,void*)>& sendCb){
     sendCb = [this](std::string& header, std::string& msg, void* cxt){
         muduo::net::TcpConnection* conn = static_cast<muduo::net::TcpConnection*>(cxt);
-        this->SendMessage(header, msg, &muduo::net::TcpConnectionPtr(conn));
+        this->SendMessage(header, msg, muduo::net::TcpConnectionPtr(conn));
     };
 }
-void MuduoServer::SendMessage(std::string& header, std::string& body, muduo::net::TcpConnectionPtr* conn){
-    std::string message="";
+void MuduoServer::SendMessage(std::string& header, std::string& body, const muduo::net::TcpConnectionPtr& conn){
+    muduo::net::Buffer buffer;
     if(header!=""){
-        
+        uint32_t headerSize = header.size();
+        buffer.append(&headerSize, 4);
+
+        buffer.append(header);
     }
+    uint32_t bodySize = body.size();
+    buffer.append(&body, 4);
+    buffer.append(body);
+
+    conn->send(&buffer);
 }
 
 void MuduoServer::setThreadNum(int num){

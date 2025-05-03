@@ -15,6 +15,9 @@ void RpcChannel::CallMethod(const google::protobuf::MethodDescriptor* method,
     }
     
     // 封装数据
+    std::string methodName = method->name();
+    // 封装头部
+    
 }
 
 RpcChannel::RpcChannel(){
