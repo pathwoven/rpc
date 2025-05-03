@@ -5,4 +5,9 @@ package RpcHeader;
 message RequestHeader{
   bytes service = 1;   // 服务名
   bytes method = 2;    // 方法名
+  uint32 id = 3;
 };
+
+message ResponseHeader{
+  uint32 id = 1;
+}

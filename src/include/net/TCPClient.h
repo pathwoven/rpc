@@ -6,5 +6,8 @@ public:
     TCPClient(std::string ip, int port);
     void connect();
     void setMessageCallback();
+private:
+    uint32_t requestId;
+    int sk;
 };
 #endif TCP_CLIENT_H  // TCP_CLIENT_H

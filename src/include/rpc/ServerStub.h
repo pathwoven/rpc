@@ -25,7 +25,14 @@ private:
 	std::unordered_map<std::string, ServiceInfo> serviceMap_;
 
 	void OnMessage(const std::string& header, const std::string& msg, void* cxt);
-	std::function<void(std::string&,std::string&,void*)> sendCb_;
-	void SendMessage(google::protobuf::Message* res, void*);
+
+	std::function<void(std::string&, std::string&, void*)> sendCb_;
+	struct cbCtx{
+		google::protobuf::Message* response;
+		std::string& header;
+		void* cxt;
+		cbCtx(google::protobuf::Message* m, std::string& h, void* c):response(m), header(h), cxt(c){}
+	};
+	void SendMessage(cbCtx* ctx);
 };
 #endif SERVER_STUB_H   // SERVER_STUB_H

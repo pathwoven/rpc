@@ -35,6 +35,7 @@ void ServerStub::OnMessage(const std::string& header, const std::string& msg, vo
     RpcHeader::RequestHeader rpcHeader;
     google::protobuf::Service* service;
     google::protobuf::MethodDescriptor* mDesc;
+    uint32_t reqId;
     // 读取头部
     if(rpcHeader.ParseFromString(header)){
         auto sm = serviceMap_.find(rpcHeader.service());
@@ -47,6 +48,7 @@ void ServerStub::OnMessage(const std::string& header, const std::string& msg, vo
             // todo
         }
         mDesc = mm->second;
+        reqId = rpcHeader.id();
     }else{
         // todo 参数错误
     }
@@ -56,19 +58,25 @@ void ServerStub::OnMessage(const std::string& header, const std::string& msg, vo
     // todo error
     }
     google::protobuf::Message* response = service->GetResponsePrototype(mDesc).New();
+    // 封装头部
+    RpcHeader::ResponseHeader resHeader;
+    resHeader.set_id(reqId);
+    std::string resHeader_str;
+    if(!resHeader.SerializeToString(&resHeader_str)){
+        // todo error
+    }
     // 定义回调函数
-    google::protobuf::Closure* done = google::protobuf::NewCallback(this, &SendMessage, response, cxt);
+    google::protobuf::Closure* done = google::protobuf::NewCallback(this, &SendMessage, &cbCtx(response, resHeader_str,cxt));
     service->CallMethod(mDesc, nullptr, request, response, done);
     
 }
 
-void ServerStub::SendMessage(google::protobuf::Message* res, void* cxt){
+void ServerStub::SendMessage(cbCtx* cxt){
     std::string response;
-    if(!res->SerializeToString(&response)){
+    if(!cxt->response->SerializeToString(&response)){
         // todo
     }
-    std::string header = "";
-    sendCb_(header, response, cxt);
+    sendCb_(cxt->header, response, cxt->cxt);
 }
 
 // 启动节点
