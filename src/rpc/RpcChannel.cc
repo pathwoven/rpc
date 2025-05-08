@@ -9,9 +9,9 @@ void RpcChannel::CallMethod(const google::protobuf::MethodDescriptor* method,
 {
     std::string serviceName = method->service()->name();
     if(serviceName_!=serviceName){   // 需要建立新连接
-        serviceName_ = serviceName;
-        std::string addr = findService(serviceName_);
-        newConnect(addr);
+        // serviceName_ = serviceName;
+        // std::string addr = findService(serviceName_);
+        // newConnect(addr);
     }
     
     std::string methodName = method->name();
@@ -30,9 +30,8 @@ void RpcChannel::CallMethod(const google::protobuf::MethodDescriptor* method,
 
 }
 
-RpcChannel::RpcChannel(){
-    RegistryCli = nullptr;
-    serviceName_ = "";
+void RpcChannel::setTcp(const TCPClient& tcp){
+    tcpClient_ = tcp;
 }
 
 void RpcChannel::newConnect(std::string addr){
@@ -42,16 +41,3 @@ void RpcChannel::newConnect(std::string addr){
     std::string port = addr.substr(idx+1);
 }
 
-std::string RpcChannel::findService(std::string service){
-    // 与注册中心建立连接   并发安全 todo
-    if(RegistryCli == nullptr){
-        RegistryCli = std::make_unique<ZkClient>();
-        RegistryCli->start();
-    }
-    
-    std::string addr = RegistryCli->findService(service);
-    if(addr == ""){
-        // todo
-    }
-    return addr;
-}

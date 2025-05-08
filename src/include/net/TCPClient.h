@@ -3,11 +3,11 @@
 #include<string>
 class TCPClient{
 public:
-    TCPClient(std::string ip, int port);
+    TCPClient(const std::string& ip, const std::string& port);
     void connect();
-    void setMessageCallback();
 private:
-    uint32_t requestId;
-    int sk;
+    std::string ip_;
+    std::string port_;
+    int sk_;
 };
 #endif TCP_CLIENT_H  // TCP_CLIENT_H
