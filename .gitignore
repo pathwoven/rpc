@@ -44,7 +44,8 @@ Thumbs.db
 *.gcno
 *.gcda
 
-# Protocol Buffers生成文件
+# 生成文件
 *.pb.cc
 *.pb.h
 generated/
+log/
