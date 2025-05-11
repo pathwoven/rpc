@@ -4,6 +4,8 @@
 #include <muduo/net/EventLoop.h>
 #include <muduo/net/TcpClient.h>
 #include <functional>
+#include <mutex>
+#include <unordered_map>
 #include "RpcHeader.pb.h"
 
 class MuduoClient: public TCPClient{
@@ -13,7 +15,7 @@ public:
     void disconnect()override;
 
     void sendMessage(const std::string& header, const std::string& body)override;
-    void sendMessage(const std::string& header, const std::string& body, uint32_t id, std::function<void()>& cb)override;
+    void sendMessage(const std::string& header, const std::string& body, uint32_t id, const std::function<void()>& cb)override;
 
     //void setConnectionCb();
     void setMessageCb(std::function<void(std::string&, std::string&)>&);
@@ -25,6 +27,14 @@ private:
     static muduo::net::EventLoop eventLoop_;
     muduo::net::TcpClient client_;
     muduo::net::TcpConnectionPtr conn_;
+
+    // 异常恢复  todo
+    void handleConnectionError();
+    void tryReconnect();   // 重连
+
+    // 请求的回调锁
+    std::mutex idMutex_;
+    std::unordered_map<uint32_t, std::function<void()>> responseCbMap_;
 
     std::function<void(std::string&, std::string&)> msgCb_;
     void onMessage(const muduo::net::TcpConnectionPtr& conn, muduo::net::Buffer* buffer, muduo::Timestamp timestamp);

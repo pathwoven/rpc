@@ -26,6 +26,31 @@ void MuduoClient::disconnect(){
 }
 
 void MuduoClient::sendMessage(const std::string& header,const std::string& body){
+     // 设置回调
+    {
+        std::lock_guard(idMutex_);
+        responseCbMap_[reqId] = cb;
+    }
+    muduo::net::Buffer buffer;
+    if(header!=""){
+        uint32_t headerSize = header.size();
+        buffer.append(&headerSize, 4);
+
+        buffer.append(header);
+    }
+    uint32_t bodySize = body.size();
+    buffer.append(&body, 4);
+    buffer.append(body);
+
+    if(conn_->connected()){
+        conn_->send(&buffer);
+    }else{
+        // todo
+    }
+}
+
+
+void MuduoClient::sendMessage(const std::string& header,const std::string& body, uint32_t reqId, const std::function<void()>& cb){
     muduo::net::Buffer buffer;
     if(header!=""){
         uint32_t headerSize = header.size();
