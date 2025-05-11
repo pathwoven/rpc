@@ -1,13 +1,12 @@
 #ifndef TCP_CLIENT_H
 #define TCP_CLIENT_H
-#include<string>
+#include <string>
 class TCPClient{
 public:
+    TCPClient();
     TCPClient(const std::string& ip, const std::string& port);
-    void connect();
-private:
-    std::string ip_;
-    std::string port_;
-    int sk_;
+    // virtual void connect();
+    virtual void disconnect();
+    virtual void sendMessage(const std::string& header, const std::string& body);
 };
 #endif TCP_CLIENT_H  // TCP_CLIENT_H

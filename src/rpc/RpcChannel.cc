@@ -1,4 +1,5 @@
 #include "RpcChannel.h"
+#include "Logger.h"
 
 // 将rpc请求发送给服务端，同时接受响应
 void RpcChannel::CallMethod(const google::protobuf::MethodDescriptor* method,
@@ -22,12 +23,18 @@ void RpcChannel::CallMethod(const google::protobuf::MethodDescriptor* method,
     // 序列化
     std::string header, body;
     if(!requestHeader.SerializeToString(&header)){
-        // todo error
+        Logger::Error("头部序列化失败");
+        controller->SetFailed("头部序列化失败");
+        return;
     }
     if(!request->SerializeToString(&body)){
-        // todo error
+        Logger::Error("请求体序列化失败");
+        controller->SetFailed("请求体序列化失败");
+        return;
     }
 
+    // 发送请求
+    tcpClient_.sendMessage(header, body);
 }
 
 void RpcChannel::setTcp(const TCPClient& tcp){
