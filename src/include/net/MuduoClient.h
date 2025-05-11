@@ -11,7 +11,9 @@ public:
     static void init();   // 必须只执行一次，线程不安全
     // void connect();
     void disconnect()override;
+
     void sendMessage(const std::string& header, const std::string& body)override;
+    void sendMessage(const std::string& header, const std::string& body, uint32_t id, std::function<void()>& cb)override;
 
     //void setConnectionCb();
     void setMessageCb(std::function<void(std::string&, std::string&)>&);
