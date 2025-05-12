@@ -12,7 +12,8 @@ public:
 private:
     RpcClient();
     // std::unordered_map<std::string, std::string> addrMap_;    // 服务名与地址的映射   
-    std::unordered_map<std::string, TCPClient> tcpMap_;  // 服务名与tcp连接的map
+    std::mutex channelMutex_;
+    std::unordered_map<std::string, std::shared_ptr<RpcChannel>> channelMap_;  // 服务名与channel的map
 
     std::unique_ptr<RegistryCli> RegistryCli;
     std::string RpcClient::findService(const std::string& service);    // 返回服务的地址

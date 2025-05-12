@@ -13,10 +13,11 @@ public:
                           const google::protobuf::Message* request,
                           google::protobuf::Message* response, 
                           google::protobuf::Closure* done) override;
-    void setTcp(const TCPClient& tcp);
+    void setTcp(std::shared_ptr<TCPClient> tcp);
 private:
+    std::atomic<uint32_t> reqIdGen_;  // 用原子操作获取请求id
     std::string serviceName_;
-    TCPClient tcpClient_;
+    std::shared_ptr<TCPClient> tcpClient_;
     void newConnect(std::string addr);
     // std::unordered_map<std::string, std::unique_ptr<TCPClient>> serviceMap_;  // 服务名与tcp连接的映射
 };

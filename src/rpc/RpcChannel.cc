@@ -20,8 +20,8 @@ void RpcChannel::CallMethod(const google::protobuf::MethodDescriptor* method,
     RpcHeader::RequestHeader requestHeader;
     requestHeader.set_service(serviceName);
     requestHeader.set_method(methodName);
-    // todo 设置id
-    uint32_t reqId;
+    // 设置id获取并加1   todo 32位
+    uint32_t reqId = reqIdGen_.fetch_add(1);
     requestHeader.set_id(reqId);
     // 序列化
     std::string header, body;
@@ -37,14 +37,14 @@ void RpcChannel::CallMethod(const google::protobuf::MethodDescriptor* method,
     }
 
     // 发送请求
-    tcpClient_.sendMessage(header, body, reqId, [&done](){
+    tcpClient_->sendMessage(header, body, reqId, [&done](){
         if(done != nullptr){
             done->Run();   // 运行回调
         }
     });
 }
 
-void RpcChannel::setTcp(const TCPClient& tcp){
+void RpcChannel::setTcp(std::shared_ptr<TCPClient> tcp){
     tcpClient_ = tcp;
 }
 
