@@ -1,4 +1,5 @@
 #include "RpcClient.h"
+#include "MuduoClient.h"
 
 template <typename StubType>
 StubType RpcClient::getStub(const std::string& service){
@@ -23,6 +24,7 @@ StubType RpcClient::getStub(const std::string& service){
 
 RpcClient::RpcClient(){
     RegistryCli = nullptr;
+    MuduoClient::init();
 }
 
 std::string RpcClient::findService(const std::string& service){

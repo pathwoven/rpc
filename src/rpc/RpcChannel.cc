@@ -1,6 +1,10 @@
 #include "RpcChannel.h"
 #include "Logger.h"
 
+RpcChannel::RpcChannel(){
+    reqIdGen_.store(0);
+}
+
 // 将rpc请求发送给服务端，同时接受响应
 void RpcChannel::CallMethod(const google::protobuf::MethodDescriptor* method,
                           google::protobuf::RpcController* controller, 
