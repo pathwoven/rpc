@@ -1,4 +1,6 @@
 #include "MuduoClient.h"
+#include "RpcHeader.pb.h"
+#include "Logger.h"
 
 muduo::net::EventLoop MuduoClient::eventLoop_ = muduo::net::EventLoop();
 
@@ -26,6 +28,26 @@ void MuduoClient::disconnect(){
 }
 
 void MuduoClient::sendMessage(const std::string& header,const std::string& body){
+    muduo::net::Buffer buffer;
+    if(header!=""){
+        uint32_t headerSize = header.size();
+        buffer.append(&headerSize, 4);
+
+        buffer.append(header);
+    }
+    uint32_t bodySize = body.size();
+    buffer.append(&body, 4);
+    buffer.append(body);
+
+    if(conn_->connected()){
+        conn_->send(&buffer);
+    }else{
+        // todo
+    }
+}
+
+
+void MuduoClient::sendMessage(const std::string& header,const std::string& body, uint32_t reqId, const std::function<void()>& cb){
      // 设置回调
     {
         std::lock_guard(idMutex_);
@@ -49,29 +71,9 @@ void MuduoClient::sendMessage(const std::string& header,const std::string& body)
     }
 }
 
-
-void MuduoClient::sendMessage(const std::string& header,const std::string& body, uint32_t reqId, const std::function<void()>& cb){
-    muduo::net::Buffer buffer;
-    if(header!=""){
-        uint32_t headerSize = header.size();
-        buffer.append(&headerSize, 4);
-
-        buffer.append(header);
-    }
-    uint32_t bodySize = body.size();
-    buffer.append(&body, 4);
-    buffer.append(body);
-
-    if(conn_->connected()){
-        conn_->send(&buffer);
-    }else{
-        // todo
-    }
-}
-
-void MuduoClient::setMessageCb(std::function<void(std::string&, std::string&)>& cb){
-    msgCb_ = std::move(cb);
-}
+// void MuduoClient::setMessageCb(std::function<void(std::string&, std::string&)>& cb){
+//     msgCb_ = std::move(cb);
+// }
 
 void MuduoClient::onMessage(const muduo::net::TcpConnectionPtr& conn, muduo::net::Buffer* buffer, muduo::Timestamp timestamp){
     while(buffer->readableBytes()>4){
@@ -88,13 +90,30 @@ void MuduoClient::onMessage(const muduo::net::TcpConnectionPtr& conn, muduo::net
         buffer->retrieve(4);   // 跳过头部长度
         std::string header(buffer->peek(), headerSize);
         buffer->retrieve(headerSize);
+        RpcHeader::ResponseHeader resHeader;
+        uint32_t id;
+        if(resHeader.ParseFromString(header)){
+            id = resHeader.id();
+        }else{
+            Logger::Error("反序列化响应头部失败");
+            // 设置错误  todo
+            return;
+        }
 
         // 读取rpc体
         buffer->retrieve(4);
         std::string message(buffer->peek(), bodySize);
         buffer->retrieve(bodySize);
 
-        msgCb_(header, message);
+        // msgCb_(header, message);
+        {
+            std::lock_guard(idMutex_);
+            auto it = responseCbMap_.find(id);
+            if(it != responseCbMap_.end()){
+                // 调用回调
+                (it->second)();
+            }
+        }
     }
 }
 void MuduoClient::onConnection(const muduo::net::TcpConnectionPtr& conn){
