@@ -1,8 +1,8 @@
-// #include "include/RegistryCli.h"
+// #include "include/RegistryClient.h"
 // #include "zookeeper/zookeeper.h"
-// void RegistryCli::registerService(google::protobuf::Service* service){
+// void RegistryClient::registerService(google::protobuf::Service* service){
     
 // }
-// void RegistryCli::start(){
+// void RegistryClient::start(){
     
 // }

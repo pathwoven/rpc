@@ -8,7 +8,7 @@
 class MuduoServer: public TCPServer{
 public:
     void bindListen(std::string ip, int port, std::string name="") override;
-    void setConnCallback(void (*OnConnection())) override;
+    void setConnCallback(void (*onConnection())) override;
     void setMessCallback(std::function<void(std::string&, std::string&, void* cxt)> cb);
     void setSendCallback(std::function<void(std::string&,std::string&,void*)>& sendCb);
     void setThreadNum(int num) override;
@@ -16,8 +16,8 @@ public:
 private:
     muduo::net::EventLoop eventLoop_;
     std::shared_ptr<muduo::net::TcpServer> server_;
-    void OnConnection(const muduo::net::TcpConnectionPtr& conn);
-    void OnMessage(const muduo::net::TcpConnectionPtr& conn, muduo::net::Buffer* buffer, muduo::Timestamp receiveTime);
+    void onConnection(const muduo::net::TcpConnectionPtr& conn);
+    void onMessage(const muduo::net::TcpConnectionPtr& conn, muduo::net::Buffer* buffer, muduo::Timestamp receiveTime);
     std::function<void(std::string&, std::string&, void*)> messCb_; 
     void SendMessage(std::string& header, std::string& message, const muduo::net::TcpConnectionPtr& conn);
 

@@ -24,7 +24,7 @@ private:
 	// 存储服务名与服务信息的映射
 	std::unordered_map<std::string, ServiceInfo> serviceMap_;
 
-	void OnMessage(const std::string& header, const std::string& msg, void* cxt);
+	void onMessage(const std::string& header, const std::string& msg, void* cxt);
 
 	std::function<void(std::string&, std::string&, void*)> sendCb_;
 	struct cbCtx{

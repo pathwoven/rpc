@@ -5,7 +5,7 @@
 #include <muduo/net/TcpConnection.h>
 #include <muduo/net/TcpServer.h>
 #include "google/protobuf/service.h"
-class RegistryCli{
+class RegistryClient{
 public:
     virtual void registerService(std::string service, std::string addr);
     virtual void registerMethod(std::string service, std::string method, std::string data="");

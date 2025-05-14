@@ -20,7 +20,7 @@ void ServerStub::registerAllService(std::string ip, int port){
     // 服务端地址
     std::string addr =  ip+":"+std::to_string(port);
     // 连接注册中心
-    std::unique_ptr<RegistryCli> RegistryCli = std::make_unique<ZkClient>();
+    std::unique_ptr<RegistryClient> RegistryClient = std::make_unique<ZkClient>();
     RegistryCli->start();
     for(auto it = serviceMap_.begin();it!=serviceMap_.end();it++){
         std::string serviceName = it->first;
@@ -31,7 +31,7 @@ void ServerStub::registerAllService(std::string ip, int port){
     }
 }
 
-void ServerStub::OnMessage(const std::string& header, const std::string& msg, void* cxt){
+void ServerStub::onMessage(const std::string& header, const std::string& msg, void* cxt){
     RpcHeader::RequestHeader rpcHeader;
     google::protobuf::Service* service;
     google::protobuf::MethodDescriptor* mDesc;
@@ -95,7 +95,7 @@ void ServerStub::run(){
     tcpServer->setThreadNum(4);
 
     // 设置回调函数
-    tcpServer->setMessCallback(std::bind(&OnMessage, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3));
+    tcpServer->setMessCallback(std::bind(&onMessage, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3));
     tcpServer->setSendCallback(sendCb_);
 
     tcpServer->run();

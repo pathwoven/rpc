@@ -2,7 +2,7 @@
 #define ZK_CLIENT_H
 #include "RegistryClient.h"
 #include "zookeeper/zookeeper.h"
-class ZkClient: public RegistryCli{
+class ZkClient: public RegistryClient{
 public:
     ZkClient();
     ~ZkClient();

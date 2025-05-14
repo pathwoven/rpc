@@ -5,7 +5,7 @@
 class TCPServer{
 public:
     virtual void bindListen(std::string ip, int port, std::string name="");
-    virtual void setConnCallback(void (*OnConnection()));
+    virtual void setConnCallback(void (*onConnection()));
     virtual void setMessCallback(std::function<void(std::string&, std::string&)>);
     virtual void setThreadNum(int n);
     virtual void run();

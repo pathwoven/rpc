@@ -1,7 +1,7 @@
 #include "MuduoServer.h"
 #include<iostream>
 
-void MuduoServer::bindListen(std::string ip, int port, std::string name=""){
+void MuduoServer::bindListen(std::string ip, int port, std::string name){
     // 创建地址对象
     muduo::net::InetAddress addr(ip, port);
     // 创建server
@@ -13,7 +13,7 @@ void MuduoServer::bindListen(std::string ip, int port, std::string name=""){
 void MuduoServer::setConnCallback(void (*OnConn())){
     
 }
-void MuduoServer::OnConnection(const muduo::net::TcpConnectionPtr& conn){
+void MuduoServer::onConnection(const muduo::net::TcpConnectionPtr& conn){
     if(!conn->connected()){
         conn->shutdown();   // 断开连接
     }
@@ -23,7 +23,7 @@ void MuduoServer::OnConnection(const muduo::net::TcpConnectionPtr& conn){
 void MuduoServer::setMessCallback(std::function<void(std::string&, std::string&, void*)> cb){
     messCb_ = std::move(cb);
 }
-void MuduoServer::OnMessage(const muduo::net::TcpConnectionPtr& conn, muduo::net::Buffer* buffer, muduo::Timestamp receiveTime){
+void MuduoServer::onMessage(const muduo::net::TcpConnectionPtr& conn, muduo::net::Buffer* buffer, muduo::Timestamp receiveTime){
     
     while(buffer->readableBytes()>4){
         const char* data = buffer->peek();
@@ -64,7 +64,7 @@ void MuduoServer::SendMessage(std::string& header, std::string& body, const mudu
         buffer.append(header);
     }
     uint32_t bodySize = body.size();
-    buffer.append(&body, 4);
+    buffer.append(&bodySize, 4);
     buffer.append(body);
 
     conn->send(&buffer);
@@ -75,8 +75,8 @@ void MuduoServer::setThreadNum(int num){
 }
 
 void MuduoServer::run(){
-    server_->setConnectionCallback(std::bind(&OnConnection, this, std::placeholders::_1));
-    server_->setMessageCallback(std::bind(&OnMessage, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3));
+    server_->setConnectionCallback(std::bind(&MuduoServer::onConnection, this, std::placeholders::_1));
+    server_->setMessageCallback(std::bind(&MuduoServer::onMessage, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3));
 
     server_->start();
     eventLoop_.loop();

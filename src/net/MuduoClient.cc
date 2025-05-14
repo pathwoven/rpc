@@ -2,7 +2,7 @@
 #include "RpcHeader.pb.h"
 #include "Logger.h"
 
-muduo::net::EventLoop MuduoClient::eventLoop_ = muduo::net::EventLoop();
+muduo::net::EventLoop MuduoClient::eventLoop_;
 
 void MuduoClient::init(){
     eventLoop_.loop();
@@ -10,15 +10,15 @@ void MuduoClient::init(){
 
 
 MuduoClient::MuduoClient(const std::string& ip, const std::string& port):
-client_ (muduo::net::TcpClient(&eventLoop_, 
+client_ (&eventLoop_, 
         muduo::net::InetAddress(ip, std::atoi(port.c_str())),
-        ip+":"+port))
+        ip+":"+port)
 {
     ip_ = ip;
     port_ = port;
 
-    client_.setConnectionCallback(std::bind(&onConnection, this,std::placeholders::_1));
-    client_.setMessageCallback(std::bind(&onMessage, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3));
+    client_.setConnectionCallback(std::bind(&MuduoClient::onConnection, this,std::placeholders::_1));
+    client_.setMessageCallback(std::bind(&MuduoClient::onMessage, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3));
 
     client_.connect();
 }
@@ -36,7 +36,7 @@ void MuduoClient::sendMessage(const std::string& header,const std::string& body)
         buffer.append(header);
     }
     uint32_t bodySize = body.size();
-    buffer.append(&body, 4);
+    buffer.append(&bodySize, 4);
     buffer.append(body);
 
     if(conn_->connected()){
@@ -50,7 +50,7 @@ void MuduoClient::sendMessage(const std::string& header,const std::string& body)
 void MuduoClient::sendMessage(const std::string& header,const std::string& body, uint32_t reqId, const std::function<void()>& cb){
      // 设置回调
     {
-        std::lock_guard(idMutex_);
+        std::lock_guard<std::mutex> lock(idMutex_);
         responseCbMap_[reqId] = cb;
     }
     muduo::net::Buffer buffer;
@@ -61,7 +61,7 @@ void MuduoClient::sendMessage(const std::string& header,const std::string& body,
         buffer.append(header);
     }
     uint32_t bodySize = body.size();
-    buffer.append(&body, 4);
+    buffer.append(&bodySize, 4);
     buffer.append(body);
 
     if(conn_->connected()){
@@ -107,7 +107,7 @@ void MuduoClient::onMessage(const muduo::net::TcpConnectionPtr& conn, muduo::net
 
         // msgCb_(header, message);
         {
-            std::lock_guard(idMutex_);
+            std::lock_guard<std::mutex> lock(idMutex_);
             auto it = responseCbMap_.find(id);
             if(it != responseCbMap_.end()){
                 // 调用回调
