@@ -11,4 +11,4 @@ class RpcApplication{
 public:
     static void init(int argc, char** argv);
 };
-#endif RPC_APPLICATION_H  // RPC_APPLICATION_H
+#endif   // RPC_APPLICATION_H

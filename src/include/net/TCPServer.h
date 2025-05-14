@@ -10,4 +10,4 @@ public:
     virtual void setThreadNum(int n);
     virtual void run();
 };
-#endif TCP_SERVER_H  // TCP_SERVER_H
+#endif   // TCP_SERVER_H

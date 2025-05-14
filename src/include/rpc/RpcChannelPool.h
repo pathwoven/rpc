@@ -5,4 +5,4 @@ class RpcChannelPool{
 public:
     RpcChannel* pickChannel();   // 从池中选出一个channel
 };
-#endif RPC_CHANNEL_POOL_H  // RPC_CHANNEL_POOL_H
+#endif   // RPC_CHANNEL_POOL_H

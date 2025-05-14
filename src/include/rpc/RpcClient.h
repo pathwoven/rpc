@@ -18,4 +18,4 @@ private:
     std::unique_ptr<RegistryCli> RegistryCli;
     std::string RpcClient::findService(const std::string& service);    // 返回服务的地址
 };
-#endif RPC_CLIENT_H  // RPC_CLIENT_H
+#endif   // RPC_CLIENT_H

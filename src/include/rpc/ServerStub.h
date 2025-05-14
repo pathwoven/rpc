@@ -35,4 +35,4 @@ private:
 	};
 	void SendMessage(cbCtx* ctx);
 };
-#endif SERVER_STUB_H   // SERVER_STUB_H
+#endif    // SERVER_STUB_H

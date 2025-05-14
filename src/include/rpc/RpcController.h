@@ -1,4 +1,5 @@
 #ifndef RPC_CONTROLLER_H
+#define RPC_CONTROLLER_H
 #include "google/protobuf/service.h"
 class RpcController: public google::protobuf::RpcController{
 public:
@@ -20,5 +21,4 @@ public:
     // 注册一个回调函数，当cancel时会被调用
     void NotifyOnCancel(google::protobuf::Closure* callback)override;
 };
-#define RPC_CONTROLLER_H
-#endif RPC_CONTROLLER_H // RPC_CONTROLLER_H
+#endif  // RPC_CONTROLLER_H

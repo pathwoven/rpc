@@ -10,4 +10,4 @@ public:
     virtual void sendMessage(const std::string& header, const std::string& body);
     virtual void sendMessage(const std::string& header, const std::string& body, uint32_t id, const std::function<void()>& cb);
 };
-#endif TCP_CLIENT_H  // TCP_CLIENT_H
+#endif   // TCP_CLIENT_H

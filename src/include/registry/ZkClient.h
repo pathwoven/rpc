@@ -15,4 +15,4 @@ private:
     void createNode(const char* path, const char* value, int valueLen, int state);
 
 };
-#endif ZK_CLIENT_H  // ZK_CLIENT_H
+#endif   // ZK_CLIENT_H

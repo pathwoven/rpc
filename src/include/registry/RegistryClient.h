@@ -13,4 +13,4 @@ public:
     virtual void start();
 private:
 };
-#endif REGISTER_CENTER_H  // REGISTER_CENTER_H
+#endif   // REGISTER_CENTER_H

@@ -20,4 +20,4 @@ private:
     static std::shared_ptr<spdlog::logger> logger_;
 };
  
-#endif LOGGER_H  // LOGGER_H
+#endif   // LOGGER_H

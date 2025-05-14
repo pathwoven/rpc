@@ -4,5 +4,5 @@
 class Codec{
 public:
     google::protobuf::Message* parseFromArray();
-}
-#endif CODEC_H  // CODEC_H
+};
+#endif   // CODEC_H

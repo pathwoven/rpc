@@ -40,4 +40,4 @@ private:
     void onMessage(const muduo::net::TcpConnectionPtr& conn, muduo::net::Buffer* buffer, muduo::Timestamp timestamp);
     void onConnection(const muduo::net::TcpConnectionPtr& conn);
 };
-#endif MUDUO_CLIENT_H // MUDUO_CLIENT_H
+#endif  // MUDUO_CLIENT_H

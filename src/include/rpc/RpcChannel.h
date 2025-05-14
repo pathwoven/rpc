@@ -22,4 +22,4 @@ private:
     void newConnect(std::string addr);
     // std::unordered_map<std::string, std::unique_ptr<TCPClient>> serviceMap_;  // 服务名与tcp连接的映射
 };
-#endif CHANNEL_H  // CHANNEL_H
+#endif   // CHANNEL_H
