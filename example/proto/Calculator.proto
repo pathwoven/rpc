@@ -1,11 +1,8 @@
 syntax = "proto3";
 
-package calculator;
+option cc_generic_services=true;
 
-// 定义服务
-service Calculator {
-    rpc Add (AddRequest) returns (AddResponse);
-}
+package MyService;
 
 // 定义请求消息
 message AddRequest {
@@ -16,4 +13,9 @@ message AddRequest {
 // 定义响应消息
 message AddResponse {
     int32 result = 1;
+}
+
+// 定义服务
+service Calculator {
+    rpc Add (AddRequest) returns (AddResponse);
 }
