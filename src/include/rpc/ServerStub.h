@@ -19,7 +19,8 @@ private:
 	// 存储单个服务内部方法名与方法的映射映射的结构
 	struct ServiceInfo{
 		google::protobuf::Service* service;
-		std::unordered_map<std::string, google::protobuf::MethodDescriptor*> methodMap;
+		// note: 由于获取到的是const MethodDescriptor这里在map中也应指定const，不然可能会报错
+		std::unordered_map<std::string, const google::protobuf::MethodDescriptor*> methodMap;
 	};
 	// 存储服务名与服务信息的映射
 	std::unordered_map<std::string, ServiceInfo> serviceMap_;

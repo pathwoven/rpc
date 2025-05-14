@@ -3,6 +3,11 @@
 ZkClient::ZkClient(){
     zh = nullptr;
 }
+ZkClient::~ZkClient(){
+    if (zh != nullptr) {
+        zookeeper_close(zh);  // 关闭ZooKeeper连接
+    }
+}
 void ZkClient::start(){
     // todo 配置
     std::string ip = "127.0.0.1";
@@ -39,4 +44,9 @@ void ZkClient::registerService(std::string service, std::string addr){
 void ZkClient::registerMethod(std::string service, std::string method, std::string data){
     std::string path = "/" + service + "/" +method;
     createNode(path.c_str(), data.c_str(), data.length(), ZOO_EPHEMERAL);
+}
+
+std::string ZkClient::findService(std::string service){
+    // todo
+    return service;
 }

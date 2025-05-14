@@ -4,11 +4,12 @@
 #include <functional>
 class TCPClient{
 public:
-    TCPClient();
-    TCPClient(const std::string& ip, const std::string& port);
+    //TCPClient(){}
+    //TCPClient(const std::string& ip, const std::string& port);
     // virtual void connect();
-    virtual void disconnect();
-    virtual void sendMessage(const std::string& header, const std::string& body);
-    virtual void sendMessage(const std::string& header, const std::string& body, uint32_t id, const std::function<void()>& cb);
+    // note: 假如不在TCP类中实现该函数，记得定义为纯虚函数
+    virtual void disconnect()=0;
+    virtual void sendMessage(const std::string& header, const std::string& body)=0;
+    virtual void sendMessage(const std::string& header, const std::string& body, uint32_t id, const std::function<void()>& cb)=0;
 };
 #endif   // TCP_CLIENT_H

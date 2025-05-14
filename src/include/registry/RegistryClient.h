@@ -7,10 +7,10 @@
 #include "google/protobuf/service.h"
 class RegistryClient{
 public:
-    virtual void registerService(std::string service, std::string addr);
-    virtual void registerMethod(std::string service, std::string method, std::string data="");
-    virtual std::string findService(std::string service);
-    virtual void start();
+    virtual void registerService(std::string service, std::string addr)=0;
+    virtual void registerMethod(std::string service, std::string method, std::string data="")=0;
+    virtual std::string findService(std::string service)=0;
+    virtual void start()=0;
 private:
 };
 #endif   // REGISTER_CENTER_H

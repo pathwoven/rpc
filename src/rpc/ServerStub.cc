@@ -9,24 +9,24 @@ void ServerStub::saveServiceInfo(google::protobuf::Service* service){
     // 遍历服务的方法，记录方法名与描述符的映射
     for(int i=0; i<serviceDescr->method_count(); i++){
         const google::protobuf::MethodDescriptor* methodDescr = serviceDescr->method(i);
-        serviceInfo.methodMap.emplace(methodDescr->name(), methodDescr);
+        serviceInfo.methodMap.emplace(std::string(methodDescr->name()), methodDescr);
     }
 
     // 保存
-    this->serviceMap_.emplace(serviceDescr->name(), serviceInfo);
+    this->serviceMap_.emplace(std::string(serviceDescr->name()), serviceInfo);
 }
 
 void ServerStub::registerAllService(std::string ip, int port){
     // 服务端地址
     std::string addr =  ip+":"+std::to_string(port);
     // 连接注册中心
-    std::unique_ptr<RegistryClient> RegistryClient = std::make_unique<ZkClient>();
-    RegistryCli->start();
+    std::unique_ptr<RegistryClient> RegistryCliPtr = std::make_unique<ZkClient>();
+    RegistryCliPtr->start();
     for(auto it = serviceMap_.begin();it!=serviceMap_.end();it++){
         std::string serviceName = it->first;
-        RegistryCli->registerService(serviceName, addr);   // 注册服务
+        RegistryCliPtr->registerService(serviceName, addr);   // 注册服务
         // for(auto m_it = it->second.methodMap.begin();m_it!=it->second.methodMap.end();m_it++){
-        //     RegistryCli->registerMethod(serviceName, m_it->first, addr);  // 注册方法
+        //     RegistryCliPtr->registerMethod(serviceName, m_it->first, addr);  // 注册方法
         // }
     }
 }
@@ -34,7 +34,7 @@ void ServerStub::registerAllService(std::string ip, int port){
 void ServerStub::onMessage(const std::string& header, const std::string& msg, void* cxt){
     RpcHeader::RequestHeader rpcHeader;
     google::protobuf::Service* service;
-    google::protobuf::MethodDescriptor* mDesc;
+    const google::protobuf::MethodDescriptor* mDesc;
     uint32_t reqId;
     // 读取头部
     if(rpcHeader.ParseFromString(header)){
@@ -65,8 +65,9 @@ void ServerStub::onMessage(const std::string& header, const std::string& msg, vo
     if(!resHeader.SerializeToString(&resHeader_str)){
         // todo error
     }
-    // 定义回调函数
-    google::protobuf::Closure* done = google::protobuf::NewCallback(this, &SendMessage, &cbCtx(response, resHeader_str,cxt));
+    // 定义回调函数   todo delete new
+    ServerStub::cbCtx* cbCtx = new ServerStub::cbCtx(response, resHeader_str, cxt);
+    google::protobuf::Closure* done = google::protobuf::NewCallback(this, &ServerStub::SendMessage, cbCtx);
     service->CallMethod(mDesc, nullptr, request, response, done);
     
 }
@@ -95,7 +96,7 @@ void ServerStub::run(){
     tcpServer->setThreadNum(4);
 
     // 设置回调函数
-    tcpServer->setMessCallback(std::bind(&onMessage, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3));
+    tcpServer->setMessCallback(std::bind(&ServerStub::onMessage, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3));
     tcpServer->setSendCallback(sendCb_);
 
     tcpServer->run();

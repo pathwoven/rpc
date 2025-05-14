@@ -23,18 +23,18 @@ StubType RpcClient::getStub(const std::string& service){
 }
 
 RpcClient::RpcClient(){
-    RegistryCli = nullptr;
+    RegistryCliPtr = nullptr;
     MuduoClient::init();
 }
 
 std::string RpcClient::findService(const std::string& service){
     // 与注册中心建立连接   并发安全 todo
-    if(RegistryCli == nullptr){
-        RegistryCli = std::make_unique<ZkClient>();
-        RegistryCli->start();
+    if(RegistryCliPtr == nullptr){
+        RegistryCliPtr = std::make_unique<ZkClient>();
+        RegistryCliPtr->start();
     }
     
-    std::string addr = RegistryCli->findService(service);
+    std::string addr = RegistryCliPtr->findService(service);
     if(addr == ""){
         // todo
     }

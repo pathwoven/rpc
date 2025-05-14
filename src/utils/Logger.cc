@@ -1,6 +1,6 @@
 #include "Logger.h"
 
-std::shared_ptr<spdlog::logger> logger_ = nullptr;
+std::shared_ptr<spdlog::logger> Logger::logger_ = nullptr;
 
 void Logger::init(const std::string& fileName, size_t maxSize, size_t maxFile){
 #if DEBUG

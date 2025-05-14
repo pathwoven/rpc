@@ -15,7 +15,7 @@ private:
     std::mutex channelMutex_;
     std::unordered_map<std::string, std::shared_ptr<RpcChannel>> channelMap_;  // 服务名与channel的map
 
-    std::unique_ptr<RegistryClient> RegistryCli;
-    std::string RpcClient::findService(const std::string& service);    // 返回服务的地址
+    std::unique_ptr<RegistryClient> RegistryCliPtr;
+    std::string findService(const std::string& service);    // 返回服务的地址
 };
 #endif   // RPC_CLIENT_H

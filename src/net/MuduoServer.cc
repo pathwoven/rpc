@@ -75,6 +75,7 @@ void MuduoServer::setThreadNum(int num){
 }
 
 void MuduoServer::run(){
+    // note: 注意绑定非静态成员时，前面要显示类名
     server_->setConnectionCallback(std::bind(&MuduoServer::onConnection, this, std::placeholders::_1));
     server_->setMessageCallback(std::bind(&MuduoServer::onMessage, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3));
 

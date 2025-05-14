@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.0)
 project(rpc)
 
 #设置全局的C++标准
-set(CMAKE_CXX_STANDARD 11)  # c11
+set(CMAKE_CXX_STANDARD 14)  # c14
 set(CMAKE_CXX_STANDARD_REQUIRED True)
 
 # 查找spdlog包
