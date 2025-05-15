@@ -2,15 +2,15 @@
 #include "RpcHeader.pb.h"
 #include "Logger.h"
 
-muduo::net::EventLoop MuduoClient::eventLoop_;
+std::shared_ptr<muduo::net::EventLoop> MuduoClient::eventLoop_=nullptr;
 
 void MuduoClient::init(){
-    eventLoop_.loop();
+    eventLoop_->loop();
 }
 
 
 MuduoClient::MuduoClient(const std::string& ip, const std::string& port):
-client_ (&eventLoop_, 
+client_ (eventLoop_.get(), 
         muduo::net::InetAddress(ip, std::atoi(port.c_str())),
         ip+":"+port)
 {

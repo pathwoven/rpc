@@ -1,6 +1,6 @@
 #include "Calculator.pb.h"
 #include "RpcApplication.h"
-#include "ServerStub.h"
+#include "RpcServer.h"
 
 class CalculatorService:public MyService::Calculator{
 public:
@@ -30,10 +30,11 @@ int main(int argc, char** argv){
    // 初始化
    RpcApplication::init(argc, argv);
 
-    ServerStub stub;
+    RpcServer stub;
     
     // 注册服务
     stub.saveServiceInfo(new CalculatorService());
+    Logger::Trace("本地服务注册完毕");
 
     // 运行服务器
     stub.run();

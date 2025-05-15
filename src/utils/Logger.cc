@@ -3,16 +3,16 @@
 std::shared_ptr<spdlog::logger> Logger::logger_ = nullptr;
 
 void Logger::init(const std::string& fileName, size_t maxSize, size_t maxFile){
-#if DEBUG
+#if true
     auto sink_console = std::make_shared<spdlog::sinks::stdout_color_sink_mt>();
-    sink_console->set_pattern("[%Y-%m-%d %H:%M:%S.%e][%n][%^%l%$][thread %t] %v");
+    sink_console->set_pattern("[%Y-%m-%d %H:%M:%S.%e][%n][%^%l%$][thread %t] %^%v%$");
     auto sink_file = std::make_shared<spdlog::sinks::rotating_file_sink_mt>(fileName, maxSize, maxFile);
     sink_file->set_pattern("[%Y-%m-%d %H:%M:%S.%e][%n][%l][thread %t] %v");
     spdlog::init_thread_pool(8192, 1); // 队列长度 + 后台线程数
     logger_ = std::make_shared<spdlog::async_logger>(
         "rpcLogger", spdlog::sinks_init_list{sink_console, sink_file},
         spdlog::thread_pool(), spdlog::async_overflow_policy::block);
-    logger_->set_level(spdlog::level::debug);
+    logger_->set_level(spdlog::level::trace);
 #else
     auto sink_file = std::make_shared<spdlog::sinks::rotating_file_sink_mt>(fileName, maxSize, maxFile);
     sink_file->set_pattern("[%Y-%m-%d %H:%M:%S.%e][%n][%l][thread %t] %v");

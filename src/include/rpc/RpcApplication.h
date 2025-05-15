@@ -4,8 +4,6 @@
 #define DEBUG   // todo
 
 #include "Logger.h"
-#include "RpcClient.h"
-#include "ServerStub.h"
 
 class RpcApplication{
 public:

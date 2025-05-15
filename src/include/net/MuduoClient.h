@@ -24,7 +24,7 @@ public:
 private:
     std::string ip_;
     std::string port_;
-    static muduo::net::EventLoop eventLoop_;
+    static std::shared_ptr<muduo::net::EventLoop> eventLoop_;
     muduo::net::TcpClient client_;
     muduo::net::TcpConnectionPtr conn_;
 

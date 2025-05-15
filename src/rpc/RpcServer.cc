@@ -1,6 +1,7 @@
-#include "ServerStub.h"
+#include "RpcServer.h"
+#include "Logger.h"
 
-void ServerStub::saveServiceInfo(google::protobuf::Service* service){
+void RpcServer::saveServiceInfo(google::protobuf::Service* service){
     // 记录服务信息
     ServiceInfo serviceInfo;
     serviceInfo.service = service;
@@ -16,7 +17,7 @@ void ServerStub::saveServiceInfo(google::protobuf::Service* service){
     this->serviceMap_.emplace(std::string(serviceDescr->name()), serviceInfo);
 }
 
-void ServerStub::registerAllService(std::string ip, int port){
+void RpcServer::registerAllService(std::string ip, int port){
     // 服务端地址
     std::string addr =  ip+":"+std::to_string(port);
     // 连接注册中心
@@ -31,7 +32,7 @@ void ServerStub::registerAllService(std::string ip, int port){
     }
 }
 
-void ServerStub::onMessage(const std::string& header, const std::string& msg, void* cxt){
+void RpcServer::onMessage(const std::string& header, const std::string& msg, void* cxt){
     RpcHeader::RequestHeader rpcHeader;
     google::protobuf::Service* service;
     const google::protobuf::MethodDescriptor* mDesc;
@@ -66,13 +67,13 @@ void ServerStub::onMessage(const std::string& header, const std::string& msg, vo
         // todo error
     }
     // 定义回调函数   todo delete new
-    ServerStub::cbCtx* cbCtx = new ServerStub::cbCtx(response, resHeader_str, cxt);
-    google::protobuf::Closure* done = google::protobuf::NewCallback(this, &ServerStub::SendMessage, cbCtx);
+    RpcServer::cbCtx* cbCtx = new RpcServer::cbCtx(response, resHeader_str, cxt);
+    google::protobuf::Closure* done = google::protobuf::NewCallback(this, &RpcServer::SendMessage, cbCtx);
     service->CallMethod(mDesc, nullptr, request, response, done);
     
 }
 
-void ServerStub::SendMessage(cbCtx* cxt){
+void RpcServer::SendMessage(cbCtx* cxt){
     std::string response;
     if(!cxt->response->SerializeToString(&response)){
         // todo
@@ -81,13 +82,14 @@ void ServerStub::SendMessage(cbCtx* cxt){
 }
 
 // 启动节点
-void ServerStub::run(){
+void RpcServer::run(){
     // todo 修改为从配置文件读入
     std::string ip = "127.0.0.1";
     int port = 8085;
     std::string name = "Server";
 
     registerAllService(ip, port);
+    Logger::Trace("服务注册完毕");
 
     // 启动tcp服务
     std::unique_ptr<MuduoServer> tcpServer = std::make_unique<MuduoServer>();
@@ -96,8 +98,9 @@ void ServerStub::run(){
     tcpServer->setThreadNum(4);
 
     // 设置回调函数
-    tcpServer->setMessCallback(std::bind(&ServerStub::onMessage, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3));
+    tcpServer->setMessCallback(std::bind(&RpcServer::onMessage, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3));
     tcpServer->setSendCallback(sendCb_);
 
     tcpServer->run();
+    Logger::Info("服务器"+ip+std::to_string(port)+"开始运行");
 }

@@ -1,5 +1,6 @@
 #include "RpcApplication.h"
 #include "Calculator.pb.h"
+#include "RpcClient.h"
 
 #include <thread>
 #include <vector>

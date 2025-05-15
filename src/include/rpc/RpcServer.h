@@ -6,7 +6,7 @@
 #include "MuduoServer.h"
 #include "ZkClient.h"
 #include <map>
-class ServerStub {
+class RpcServer {
 public:
 	// 保存该服务的信息
 	void saveServiceInfo(google::protobuf::Service* service);
