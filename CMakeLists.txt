@@ -5,6 +5,8 @@ project(rpc)
 set(CMAKE_CXX_STANDARD 14)  # c14
 set(CMAKE_CXX_STANDARD_REQUIRED True)
 
+set(CMAKE_BUILD_TYPE Debug)   # Debug 调试用
+
 # 查找spdlog包
 if(NOT TARGET spdlog)          # 如果当前 CMake 工程中未定义名为 `spdlog` 的目标
     find_package(spdlog REQUIRED)  # 从系统路径查找并加载已安装的 spdlog 库

@@ -101,6 +101,6 @@ void RpcServer::run(){
     tcpServer->setMessCallback(std::bind(&RpcServer::onMessage, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3));
     tcpServer->setSendCallback(sendCb_);
 
+    Logger::Info("服务器"+ip+":"+std::to_string(port)+"开始运行");
     tcpServer->run();
-    Logger::Info("服务器"+ip+std::to_string(port)+"开始运行");
 }

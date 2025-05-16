@@ -2,6 +2,7 @@
 #define MUDUO_CLIENT_H
 #include "TCPClient.h"
 #include <muduo/net/EventLoop.h>
+#include <muduo/net/EventLoopThread.h>  // todo
 #include <muduo/net/TcpClient.h>
 #include <functional>
 #include <mutex>
@@ -21,10 +22,12 @@ public:
     void setMessageCb(std::function<void(std::string&, std::string&)>&);
 
     MuduoClient(const std::string& ip, const std::string& port);
+    ~MuduoClient();
 private:
     std::string ip_;
     std::string port_;
-    static std::shared_ptr<muduo::net::EventLoop> eventLoop_;
+    static std::unique_ptr<muduo::Thread> eventLoopThread_;
+    static muduo::net::EventLoop* eventLoop_;
     muduo::net::TcpClient client_;
     muduo::net::TcpConnectionPtr conn_;
 

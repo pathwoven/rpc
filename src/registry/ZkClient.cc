@@ -78,7 +78,7 @@ void ZkClient::registerMethod(std::string service, std::string method, std::stri
 
 std::string ZkClient::findService(std::string service, bool watcher){
     std::string path = "/services/" + service;
-    String_vector services;
+    String_vector services{};
     int flag = zoo_get_children(zh, path.c_str(), watcher, &services);
     if(flag != ZOK){
         if(flag == ZNONODE){

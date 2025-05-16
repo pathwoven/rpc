@@ -1,16 +1,36 @@
 #include "MuduoClient.h"
+
 #include "RpcHeader.pb.h"
 #include "Logger.h"
 
-std::shared_ptr<muduo::net::EventLoop> MuduoClient::eventLoop_=nullptr;
+//muduo::net::EventLoopThread loopThread_;
+std::unique_ptr<muduo::Thread> MuduoClient::eventLoopThread_; 
+muduo::net::EventLoop* MuduoClient::eventLoop_ = nullptr;
 
 void MuduoClient::init(){
-    eventLoop_->loop();
+    if(eventLoop_){
+        Logger::Error("MuduoClient::init() 只能调用一次");
+        return;
+    }
+    eventLoopThread_ = std::make_unique<muduo::Thread>([](){
+        muduo::net::EventLoop loop;
+        eventLoop_ = &loop;
+        MuduoClient::eventLoop_->loop();
+    });
+    eventLoopThread_->start();
+    //eventLoop_->loop();
 }
 
+MuduoClient::~MuduoClient(){
+    // todo
+    // if(eventLoop_){
+    //     eventLoop_->quit();
+    //     eventLoopThread_->join();
+    // }
+}
 
 MuduoClient::MuduoClient(const std::string& ip, const std::string& port):
-client_ (eventLoop_.get(), 
+client_ (eventLoop_, 
         muduo::net::InetAddress(ip, std::atoi(port.c_str())),
         ip+":"+port)
 {
