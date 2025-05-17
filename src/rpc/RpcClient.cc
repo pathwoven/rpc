@@ -4,9 +4,9 @@
 
 // template <typename StubType>
 // std::unique_ptr<StubType> RpcClient::getStub(const std::string& service){
-//     auto it = channelMap_.find(service);
+//     auto it = m_channel_map_.find(service);
 //     std::shared_ptr<RpcChannel> rpcChannel;
-//     if(it == channelMap_.end()){
+//     if(it == m_channel_map_.end()){
 //         // 建立新的tcpClient todo
 //         std::string addr = findService(service);
 //         // 需要确保addr一定是ip:port的形式
@@ -15,7 +15,7 @@
 //         std::string port = addr.substr(idx+1);
 //         std::shared_ptr<TCPClient> tcpClient = std::make_shared<TCPClient>(ip, port);
 //         rpcChannel->setTcp(tcpClient);
-//         channelMap_.insert({service, rpcChannel});
+//         m_channel_map_.insert({service, rpcChannel});
 //     }else{
 //         rpcChannel = it->second;
 //     }

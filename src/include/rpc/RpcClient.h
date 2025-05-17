@@ -15,8 +15,8 @@ public:
         std::shared_ptr<RpcChannel> rpcChannel;
         {
             std::lock_guard<std::mutex> lock(channelMutex_);
-            auto it = channelMap_.find(service);
-            if(it == channelMap_.end()){
+            auto it = m_channel_map_.find(service);
+            if(it == m_channel_map_.end()){
                 // 建立新的tcpClient todo
                 std::string addr = findService(service);
                 // 需要确保addr一定是ip:port的形式
@@ -26,7 +26,7 @@ public:
                 std::shared_ptr<TCPClient> tcpClient = std::make_shared<MuduoClient>(ip, port);
                 rpcChannel = std::make_shared<RpcChannel>();
                 rpcChannel->setTcp(tcpClient);
-                channelMap_.insert({service, rpcChannel});
+                m_channel_map_.insert({service, rpcChannel});
                 Logger::Info("RpcClient::getStub() 创建新的rpcChannel，连接至 "+ip+":"+port);
             }else{
                 rpcChannel = it->second;
@@ -39,7 +39,7 @@ public:
 private:
     // std::unordered_map<std::string, std::string> addrMap_;    // 服务名与地址的映射   
     std::mutex channelMutex_;
-    std::unordered_map<std::string, std::shared_ptr<RpcChannel>> channelMap_;  // 服务名与channel的map
+    std::unordered_map<std::string, std::shared_ptr<RpcChannel>> m_channel_map_;  // 服务名与channel的map
 
     std::unique_ptr<RegistryClient> RegistryCliPtr;
     std::string findService(const std::string& service);    // 返回服务的地址

@@ -2,10 +2,18 @@
 #include "Logger.h"
 #include <vector>
 
-
+// 全局观察器，用于接收ZooKeeper服务器的通知
 void globalWatcher(zhandle_t *zh, int type, 
         int state, const char *path,void *watcherCtx){
-    
+    // 子节点发生变化（用于client  zoo_get_child 会设下这个监视器
+    // 用于监视服务实例的变化
+    if(type == ZOO_CHILD_EVENT){
+        
+    } 
+    // 连接事件 与服务器失联或重连
+    else if(type == ZOO_SESSION_EVENT){
+        // todo
+    }
 }
 
 ZkClient::ZkClient(){
