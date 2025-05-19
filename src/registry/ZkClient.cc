@@ -3,11 +3,51 @@
 #include <vector>
 
 // 全局观察器，用于接收ZooKeeper服务器的通知
-void globalWatcher(zhandle_t *zh, int type, 
+void ZkClient::globalWatcher(zhandle_t *zh, int type, 
         int state, const char *path,void *watcherCtx){
     // 子节点发生变化（用于client  zoo_get_child 会设下这个监视器
     // 用于监视服务实例的变化
     if(type == ZOO_CHILD_EVENT){
+        // 判断是否是服务变化
+        std::string pathStr = std::string(path);
+        if(pathStr.find("/services/") != 0){
+            // todo
+            return;
+        }
+        // 获取服务名
+        std::string name = pathStr.substr(10);
+        String_vector data{};
+        // 获取子节点并重新添加监视器
+        int flag = zoo_get_children(zh, path, 1, &data);
+        if(flag != ZOK){
+            if(flag == ZNONODE){
+                // todo
+                Logger::Error("Zookeeper未发现服务："+name);
+                return;
+            }else{
+                Logger::Error("Zookeeper查找服务 "+name+" 异常，返回："+std::to_string(flag));
+                return;
+            }
+        }
+        if(data.count == 0){
+            Logger::Info("服务 "+name+" 的实例已全部下线");
+        }
+        std::vector<ServiceInfo> services{};
+        for(int i=0;i<data.count;i++){
+            // todo 没有考虑权重
+            services.push_back(ServiceInfo(data.data[i]));
+        }
+        // 获取this 指针
+        ZkClient* self = static_cast<ZkClient*>(watcherCtx);
+        if(self){
+            std::lock_guard<std::mutex> lock(self->servicesMutex_);
+            // 更改service info
+            self->m_services_info_[name] = std::move(services);
+        } else{
+            Logger::Error("Zookeeper的wathcer未传入this指针");
+            return;
+        }
+        // 通知服务的更改   todo
         
     } 
     // 连接事件 与服务器失联或重连
@@ -18,11 +58,16 @@ void globalWatcher(zhandle_t *zh, int type,
 
 ZkClient::ZkClient(){
     zh = nullptr;
+    setLoadBalancer(new RoundRobin());
 }
 ZkClient::~ZkClient(){
     if (zh != nullptr) {
         zookeeper_close(zh);  // 关闭ZooKeeper连接
     }
+}
+void ZkClient::setLoadBalancer(LoadBalancer* lb){
+    std::lock_guard<std::mutex> lock(balancerMutex_);
+    m_lb_.reset(lb);
 }
 void ZkClient::start(){
     // todo 配置
@@ -30,7 +75,7 @@ void ZkClient::start(){
     std::string port = "2181";
     std::string addr = ip + ":" + port;
     // TODO 回调函数
-    zh = zookeeper_init(addr.c_str(), &globalWatcher, 6000, nullptr, nullptr, 0);
+    zh = zookeeper_init(addr.c_str(), &globalWatcher, 6000, nullptr, this, 0);
     if(zh == nullptr){
         throw std::runtime_error("zookeeper connection failed");   // todo 失败
     }
@@ -85,6 +130,15 @@ void ZkClient::registerMethod(std::string service, std::string method, std::stri
 }
 
 std::string ZkClient::findService(std::string service, bool watcher){
+    {
+        std::lock_guard<std::mutex> lock(servicesMutex_);
+        auto it =m_services_info_.find(service);
+        if(it != m_services_info_.end()){
+            std::lock_guard<std::mutex> lock1(balancerMutex_);
+            return m_lb_->select(it->second).addr;
+        }
+    }
+    
     std::string path = "/services/" + service;
     String_vector services{};
     int flag = zoo_get_children(zh, path.c_str(), watcher, &services);
@@ -102,6 +156,19 @@ std::string ZkClient::findService(std::string service, bool watcher){
         Logger::Error("Zookeeper未发现服务 "+service+" 的实例");
         return "";
     }
-    // todo 负载均衡
-    return services.data[0];
+    {
+        std::vector<ServiceInfo> servicesInfo{};
+        for(int i=0;i<services.count;i++){
+            // todo 没有考虑权重
+            servicesInfo.push_back(ServiceInfo(services.data[i]));
+        }
+        std::string addr;
+        {
+            std::lock_guard<std::mutex> lock(balancerMutex_);
+            addr = m_lb_->select(servicesInfo).addr;
+        }
+        std::lock_guard<std::mutex> lock(servicesMutex_);
+        m_services_info_.insert({service, std::move(servicesInfo)});
+        return addr;
+    }
 }

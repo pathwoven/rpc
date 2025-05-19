@@ -8,6 +8,7 @@ target_include_directories(rpc PUBLIC
     ${CMAKE_CURRENT_SOURCE_DIR}/include/registry
     ${CMAKE_CURRENT_SOURCE_DIR}/include/rpc
     ${CMAKE_CURRENT_SOURCE_DIR}/include/utils
+    ${CMAKE_CURRENT_SOURCE_DIR}/include/load_balance
     ${CMAKE_CURRENT_SOURCE_DIR}/proto/generated
 )
 
