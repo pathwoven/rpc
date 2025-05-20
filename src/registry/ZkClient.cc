@@ -69,9 +69,10 @@ void ZkClient::setLoadBalancer(LoadBalancer* lb){
     std::lock_guard<std::mutex> lock(balancerMutex_);
     m_lb_.reset(lb);
 }
+
 void ZkClient::start(){
     // todo 配置
-    std::string ip = "127.0.0.1";
+    std::string ip = "0.0.0.0";
     std::string port = "2181";
     std::string addr = ip + ":" + port;
     // TODO 回调函数

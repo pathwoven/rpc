@@ -84,7 +84,7 @@ void RpcServer::SendMessage(cbCtx* cxt){
 // 启动节点
 void RpcServer::run(){
     // todo 修改为从配置文件读入
-    std::string ip = "127.0.0.1";
+    std::string ip = "0.0.0.0";
     int port = 8085;
     std::string name = "Server";
 

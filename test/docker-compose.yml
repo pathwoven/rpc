@@ -1,0 +1,46 @@
+version: '3.9'
+services:
+  zookeeper:
+    image: zookeeper:3.7
+    container_name: zookeeper
+    networks:
+      rpc_net:
+        ipv4_address: 172.18.2.0
+
+  server1:
+    build:
+      context: ./server
+    container_name: rpc_server_1
+    depends_on:
+      - zookeeper
+    networks:
+      rpc_net:
+        ipv4_address: 172.18.0.1
+
+  server2:
+    build:
+      context: ./server
+    container_name: rpc_server_2
+    depends_on:
+      - zookeeper
+    networks:
+      rpc_net:
+        ipv4_address: 172.18.0.2
+
+  client:
+    build:
+      context: ./client
+    depends_on:
+      - server1
+      - server2
+    environment:
+      - ZK_HOST=zookeeper:2181
+    stdin_open: true
+    tty: true
+
+networks:
+  rpc_net:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.18.0.0/16
