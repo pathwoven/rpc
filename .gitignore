@@ -12,6 +12,7 @@
 build/
 out/
 bin/
+lib/
 obj/
 CMakeCache.txt
 CMakeFiles/

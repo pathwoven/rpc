@@ -27,9 +27,10 @@ services:
       rpc_net:
         ipv4_address: 172.18.0.2
 
-  client:
+  client1:
     build:
       context: ./client
+    container_name: rpc_server_2
     depends_on:
       - server1
       - server2
