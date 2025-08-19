@@ -40,7 +40,7 @@ set(LIBS
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/lib) # 静态库路径
 
 file(GLOB_RECURSE SRC_FILES ${CMAKE_CURRENT_SOURCE_DIR}/*.cc)
-aux_source_directory(PROTO_FILES ${CMAKE_CURRENT_SOURCE_DIR}/proto/generated)
+aux_source_directory(PROTO_FILES ${CMAKE_CURRENT_SOURCE_DIR}/proto)
 # 创建动态库
 add_library(rpc STATIC ${SRC_FILES} ${PROTO_FILES})
 
@@ -50,7 +50,7 @@ target_include_directories(rpc PUBLIC
     ${CMAKE_CURRENT_SOURCE_DIR}/include/rpc
     ${CMAKE_CURRENT_SOURCE_DIR}/include/utils
     ${CMAKE_CURRENT_SOURCE_DIR}/include/load_balance
-    ${CMAKE_CURRENT_SOURCE_DIR}/proto/generated
+    ${CMAKE_CURRENT_SOURCE_DIR}/proto
 )
 
 # 静态链接库

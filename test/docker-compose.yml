@@ -30,7 +30,7 @@ services:
   client1:
     build:
       context: ./client
-    container_name: rpc_server_2
+    container_name: rpc_client_1
     depends_on:
       - server1
       - server2

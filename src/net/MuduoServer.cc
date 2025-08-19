@@ -6,8 +6,6 @@ void MuduoServer::bindListen(std::string ip, int port, std::string name){
     muduo::net::InetAddress addr(ip, port);
     // 创建server
     server_ = std::make_shared<muduo::net::TcpServer>(&eventLoop_, addr, name);
-
-    
 }
 
 void MuduoServer::setConnCallback(void (*OnConn())){
