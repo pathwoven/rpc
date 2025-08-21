@@ -25,6 +25,7 @@ include_directories(${Protobuf_INCLUDE_DIRS})
 #     muduo_base
 #     spdlog
 # )
+# 设置静态链接库
 set(LIBS
     /usr/lib/x86_64-linux-gnu/libprotobuf.a  # 静态链接protobuf
     /usr/lib/x86_64-linux-gnu/libpthread.a  # 静态链接pthread
@@ -40,11 +41,13 @@ set(LIBS
 set(LIBRARY_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/lib) # 静态库路径
 
 file(GLOB_RECURSE SRC_FILES ${CMAKE_CURRENT_SOURCE_DIR}/*.cc)
-aux_source_directory(PROTO_FILES ${CMAKE_CURRENT_SOURCE_DIR}/proto)
+# aux_source_directory(${CMAKE_CURRENT_SOURCE_DIR}/proto PROTO_FILES)
 
-# 创建库
-add_library(rpc STATIC ${SRC_FILES} ${PROTO_FILES})
+# 创建动态库
+# add_library(rpc SHARED ${SRC_FILES})
 
+# 创建静态库
+add_library(rpc STATIC ${SRC_FILES})
 target_include_directories(rpc PUBLIC 
     ${CMAKE_CURRENT_SOURCE_DIR}/include/net
     ${CMAKE_CURRENT_SOURCE_DIR}/include/registry
@@ -54,8 +57,8 @@ target_include_directories(rpc PUBLIC
     ${CMAKE_CURRENT_SOURCE_DIR}/proto
 )
 
-# 静态链接库
-target_link_libraries(rpc PUBLIC -static ${LIBS})
+target_compile_options(rpc PUBLIC -std=c++11 -Wall)
 
-target_compile_options(rpc PRIVATE -std=c++11 -Wall)
-
+# message(STATUS "源文件：${SRC_FILES}")
+# message(STATUS "头文件：  ")
+# message(STATUS "Library output path: ${LIBRARY_OUTPUT_PATH}")
