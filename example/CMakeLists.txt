@@ -8,7 +8,7 @@
 # set(CMAKE_BUILD_TYPE Debug)   # Debug 调试用
 
 # 设置可执行文件的输出目录
-set(EXECUTABLE_OUTPUT_PATH /bin)
+# set(EXECUTABLE_OUTPUT_PATH /bin)
 
 # add_subdirectory(${CMAKE_SOURCE_DIR}/../src ${CMAKE_BINARY_DIR}/src)
 add_subdirectory(server)

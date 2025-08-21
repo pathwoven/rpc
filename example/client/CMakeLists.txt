@@ -1,9 +1,10 @@
 file(GLOB SRC_FILES ${CMAKE_CURRENT_SOURCE_DIR}/*.cc)
 file(GLOB PROTO_FILES ${CMAKE_CURRENT_SOURCE_DIR}/../proto/*.cc)
 
-link_libraries(rpc)
 add_executable(client ${SRC_FILES} ${PROTO_FILES})
 
+# 链接
+target_link_libraries(client rpc ${LIBS})
 # 链接
 # target_link_libraries(client ${PROJECT_SOURCE_DIR}/../lib/librpc.a)
 

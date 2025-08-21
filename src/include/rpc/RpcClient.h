@@ -40,6 +40,8 @@ private:
     // std::unordered_map<std::string, std::string> addrMap_;    // 服务名与地址的映射   
     std::mutex channelMutex_;
     std::unordered_map<std::string, std::shared_ptr<RpcChannel>> m_channel_map_;  // 服务名与channel的map
+    // 连接池的最大连接数
+    int maxConn = 3;
 
     std::unique_ptr<RegistryClient> RegistryCliPtr;
     std::string findService(const std::string& service);    // 返回服务的地址

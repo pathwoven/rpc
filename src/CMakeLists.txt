@@ -7,14 +7,14 @@
 
 # set(CMAKE_BUILD_TYPE Debug)   # Debug 调试用
 
-# 查找spdlog包
-if(NOT TARGET spdlog)          # 如果当前 CMake 工程中未定义名为 `spdlog` 的目标
-    find_package(spdlog REQUIRED)  # 从系统路径查找并加载已安装的 spdlog 库
-endif()
-#查找protobuf包
-set(Protobuf_LIBRARIES /usr/lib/x86_64-linux-gnu/libprotobuf.so)
-find_package(Protobuf REQUIRED)
-include_directories(${Protobuf_INCLUDE_DIRS})
+# # 查找spdlog包
+# if(NOT TARGET spdlog)          # 如果当前 CMake 工程中未定义名为 `spdlog` 的目标
+#     find_package(spdlog REQUIRED)  # 从系统路径查找并加载已安装的 spdlog 库
+# endif()
+# #查找protobuf包
+# set(Protobuf_LIBRARIES /usr/lib/x86_64-linux-gnu/libprotobuf.so)
+# find_package(Protobuf REQUIRED)
+# include_directories(${Protobuf_INCLUDE_DIRS})
 
 #设置链接库
 # set(LIBS
@@ -25,15 +25,15 @@ include_directories(${Protobuf_INCLUDE_DIRS})
 #     muduo_base
 #     spdlog
 # )
-# 设置静态链接库
-set(LIBS
-    /usr/lib/x86_64-linux-gnu/libprotobuf.a  # 静态链接protobuf
-    /usr/lib/x86_64-linux-gnu/libpthread.a  # 静态链接pthread
-    /usr/lib/x86_64-linux-gnu/libzookeeper_mt.a  # 静态链接zookeeper_mt
-    /usr/local/lib/libmuduo_net.a  # 静态链接muduo_net
-    /usr/local/lib/libmuduo_base.a  # 静态链接muduo_base
-    /usr/local/lib/libspdlog.a  # 静态链接spdlog
-)
+# # 设置静态链接库
+# set(LIBS
+#     /usr/lib/x86_64-linux-gnu/libprotobuf.a  # 静态链接protobuf
+#     /usr/lib/x86_64-linux-gnu/libpthread.a  # 静态链接pthread
+#     /usr/lib/x86_64-linux-gnu/libzookeeper_mt.a  # 静态链接zookeeper_mt
+#     /usr/local/lib/libmuduo_net.a  # 静态链接muduo_net
+#     /usr/local/lib/libmuduo_base.a  # 静态链接muduo_base
+#     /usr/local/lib/libspdlog.a  # 静态链接spdlog
+# )
 
 
 # 指定库的生成路径
@@ -44,10 +44,10 @@ file(GLOB_RECURSE SRC_FILES ${CMAKE_CURRENT_SOURCE_DIR}/*.cc)
 # aux_source_directory(${CMAKE_CURRENT_SOURCE_DIR}/proto PROTO_FILES)
 
 # 创建动态库
-# add_library(rpc SHARED ${SRC_FILES})
+add_library(rpc SHARED ${SRC_FILES})
 
 # 创建静态库
-add_library(rpc STATIC ${SRC_FILES})
+# add_library(rpc STATIC ${SRC_FILES})
 target_include_directories(rpc PUBLIC 
     ${CMAKE_CURRENT_SOURCE_DIR}/include/net
     ${CMAKE_CURRENT_SOURCE_DIR}/include/registry
