@@ -37,11 +37,12 @@ set(LIBS
 
 # 指定库的生成路径
 # set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/lib)  # 动态库路径
-set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/lib) # 静态库路径
+set(LIBRARY_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/lib) # 静态库路径
 
 file(GLOB_RECURSE SRC_FILES ${CMAKE_CURRENT_SOURCE_DIR}/*.cc)
 aux_source_directory(PROTO_FILES ${CMAKE_CURRENT_SOURCE_DIR}/proto)
-# 创建动态库
+
+# 创建库
 add_library(rpc STATIC ${SRC_FILES} ${PROTO_FILES})
 
 target_include_directories(rpc PUBLIC 
