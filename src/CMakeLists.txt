@@ -25,16 +25,17 @@
 #     muduo_base
 #     spdlog
 # )
-# # 设置静态链接库
-# set(LIBS
-#     /usr/lib/x86_64-linux-gnu/libprotobuf.a  # 静态链接protobuf
-#     /usr/lib/x86_64-linux-gnu/libpthread.a  # 静态链接pthread
-#     /usr/lib/x86_64-linux-gnu/libzookeeper_mt.a  # 静态链接zookeeper_mt
-#     /usr/local/lib/libmuduo_net.a  # 静态链接muduo_net
-#     /usr/local/lib/libmuduo_base.a  # 静态链接muduo_base
-#     /usr/local/lib/libspdlog.a  # 静态链接spdlog
-# )
+# 设置静态链接库
+set(LIBS
+    /usr/lib/x86_64-linux-gnu/libprotobuf.a  # 静态链接protobuf
+    /usr/lib/x86_64-linux-gnu/libpthread.a  # 静态链接pthread
+    /usr/lib/x86_64-linux-gnu/libzookeeper_mt.a  # 静态链接zookeeper_mt
+    /usr/local/lib/libmuduo_net.a  # 静态链接muduo_net
+    /usr/local/lib/libmuduo_base.a  # 静态链接muduo_base
+    /usr/local/lib/libspdlog.a  # 静态链接spdlog
+)
 
+find_package(yaml-cpp REQUIRED)
 
 # 指定库的生成路径
 # set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/lib)  # 动态库路径
@@ -44,10 +45,15 @@ file(GLOB_RECURSE SRC_FILES ${CMAKE_CURRENT_SOURCE_DIR}/*.cc)
 # aux_source_directory(${CMAKE_CURRENT_SOURCE_DIR}/proto PROTO_FILES)
 
 # 创建动态库
-add_library(rpc SHARED ${SRC_FILES})
+# add_library(rpc SHARED ${SRC_FILES})
 
 # 创建静态库
-# add_library(rpc STATIC ${SRC_FILES})
+add_library(rpc STATIC ${SRC_FILES})
+
+target_link_libraries(rpc ${LIBS})
+
+target_link_directories(rpc PRIVATE yaml-cpp)
+
 target_include_directories(rpc PUBLIC 
     ${CMAKE_CURRENT_SOURCE_DIR}/include/net
     ${CMAKE_CURRENT_SOURCE_DIR}/include/registry

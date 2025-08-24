@@ -1,5 +1,6 @@
 #include "ZkClient.h"
 #include "Logger.h"
+#include "RpcConfig.h"
 #include <vector>
 
 // 全局观察器，用于接收ZooKeeper服务器的通知
@@ -71,12 +72,12 @@ void ZkClient::setLoadBalancer(LoadBalancer* lb){
 }
 
 void ZkClient::start(){
-    // todo 配置
-    std::string ip = "0.0.0.0";
-    std::string port = "2181";
-    std::string addr = ip + ":" + port;
-    // TODO 回调函数
-    zh = zookeeper_init(addr.c_str(), &globalWatcher, 6000, nullptr, this, 0);
+    // // 配置
+    // std::string ip = "0.0.0.0";
+    // std::string port = "2181";
+    // std::string addr = ip + ":" + port;
+    // zh = zookeeper_init(addr.c_str(), &globalWatcher, 6000, nullptr, this, 0);
+    zh = zookeeper_init(RpcConfig::zookeeperAddr.c_str(), &globalWatcher, 6000, nullptr, this, 0);
     if(zh == nullptr){
         throw std::runtime_error("zookeeper connection failed");   // todo 失败
     }

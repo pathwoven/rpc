@@ -1,16 +1,12 @@
 file(GLOB SRC_FILES ${CMAKE_CURRENT_SOURCE_DIR}/*.cc)
 file(GLOB PROTO_FILES ${CMAKE_CURRENT_SOURCE_DIR}/../proto/*.cc)
 
-# 链接
-# link_libraries(rpc)
-
 add_executable(server ${SRC_FILES} ${PROTO_FILES})
 
 # 链接
-target_link_libraries(server rpc yaml-cpp ${LIBS})
+target_link_libraries(server rpc ${LIBS})
 
 target_include_directories(server PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/../proto)
-# message(STATUS "Server source files:  ${CMAKE_CURRENT_SOURCE_DIR}/../proto")
 
 target_compile_options(server PRIVATE -std=c++11 -Wall)
 

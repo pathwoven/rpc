@@ -27,9 +27,8 @@ private:
 };
 
 int main(int argc, char** argv){
-    // 初始化
-    if(argc == 0) RpcApplication::init("../config.yaml");
-    else RpcApplication::init(argv[0]);
+   // 初始化
+   RpcApplication::init(argc, argv);
 
     RpcServer stub;
     

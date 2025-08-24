@@ -7,6 +7,6 @@
 
 class RpcApplication{
 public:
-    static void init(int argc, char** argv);
+    static void init(std::string configPath);
 };
 #endif   // RPC_APPLICATION_H
