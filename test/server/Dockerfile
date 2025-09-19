@@ -36,10 +36,13 @@ RUN git clone https://github.com/gabime/spdlog.git /tmp/spdlog && \
 
 # 拷贝项目源码
 WORKDIR /app
-COPY . .
 
 # 构建
+COPY ./src ./src
+COPY CMakeLists.txt .
 RUN rm -rf build && mkdir build && cd build && cmake .. && make VERBOSE=1
+
+COPY ./test ./test
 RUN mkdir test/lib && mv lib/* test/lib/
 RUN cd test/server && rm -rf build && mkdir build && cd build && cmake .. && make VERBOSE=1
 
@@ -60,8 +63,10 @@ COPY --from=builder /usr/local/include /usr/local/include
 COPY --from=builder /app/test/lib/ /app/lib/
 COPY --from=builder /app/test/server/bin/ /app/server/bin/
 COPY --from=builder /app/src/include/ /app/src/include/
+COPY --from=builder /app/test/config.yml /app/config.yml
 
 WORKDIR /app
 
+
 # 设置启动命令
-CMD ["/app/server/bin/server"]
+CMD ["./server/bin/server", "/app/config.yml"]

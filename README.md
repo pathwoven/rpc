@@ -8,12 +8,17 @@ protoc -I=../example/proto --cpp_out=../example/proto ../example/proto/Calculato
 
 - 在项目根目录下创建build文件夹，配置并构建项目
 ``` 
-mkdir build && cd build && cmake .. && make
+rm -rf build && mkdir build && cd build && cmake .. && make
 ```
 
-- 运行（在项目根目录下）
+- 进入example并构建
 ```
-cd bin && ./server
+cd ../example && rm -rf build && mkdir build && cd build && cmake .. && make
+```
+
+- 运行
+```
+cd ../bin && ./server
 ./client
 ```
 

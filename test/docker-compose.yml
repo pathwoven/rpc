@@ -1,30 +1,30 @@
 services:
   zookeeper1:
-    image: zookeeper:3.7
+    image: zookeeper:3.9
     container_name: zookeeper1
     environment:
       - ZOO_MY_ID=1
-      - ZOO_SERVERS=server.1=zookeeper1:2888:3888 server.2=zookeeper2:2888:3888 server.3=zookeeper3:2888:3888
+      - ZOO_SERVERS=server.1=zookeeper1:2888:3888;2181 server.2=zookeeper2:2888:3888;2181 server.3=zookeeper3:2888:3888;2181
     networks:
       rpc_net:
         ipv4_address: 172.18.3.1
 
   zookeeper2:
-    image: zookeeper:3.7
+    image: zookeeper:3.9
     container_name: zookeeper2
     environment:
       - ZOO_MY_ID=2
-      - ZOO_SERVERS=server.1=zookeeper1:2888:3888 server.2=zookeeper2:2888:3888 server.3=zookeeper3:2888:3888
+      - ZOO_SERVERS=server.1=zookeeper1:2888:3888;2181 server.2=zookeeper2:2888:3888;2181 server.3=zookeeper3:2888:3888;2181
     networks:
       rpc_net:
         ipv4_address: 172.18.3.2
 
   zookeeper3:
-    image: zookeeper:3.7
+    image: zookeeper:3.9
     container_name: zookeeper3
     environment:
       - ZOO_MY_ID=3
-      - ZOO_SERVERS=server.1=zookeeper1:2888:3888 server.2=zookeeper2:2888:3888 server.3=zookeeper3:2888:3888
+      - ZOO_SERVERS=server.1=zookeeper1:2888:3888;2181 server.2=zookeeper2:2888:3888;2181 server.3=zookeeper3:2888:3888;2181
     networks:
       rpc_net:
         ipv4_address: 172.18.3.3
@@ -74,8 +74,6 @@ services:
       - server1
       - server2
       - client_builder
-    environment:
-      - ZK_HOST=zookeeper:2181
     stdin_open: true
     tty: true
     networks:
@@ -89,8 +87,6 @@ services:
       - server1
       - server2
       - client_builder
-    environment:
-      - ZK_HOST=zookeeper:2181
     stdin_open: true
     tty: true
     networks:
@@ -105,8 +101,6 @@ services:
       - server1
       - server2
       - client_builder
-    environment:
-      - ZK_HOST=zookeeper:2181
     stdin_open: true
     tty: true
     networks:
