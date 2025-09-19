@@ -1,3 +1,4 @@
-zookeeper:
-  nodes:
-    - 0.0.0.0:2181
+zookeeper: 
+  nodes: 
+    - 0.0.0.0:2181 
+

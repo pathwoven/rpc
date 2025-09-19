@@ -61,5 +61,7 @@ COPY --from=builder /app/test/lib/ /app/lib/
 COPY --from=builder /app/test/server/bin/ /app/server/bin/
 COPY --from=builder /app/src/include/ /app/src/include/
 
+WORKDIR /app
+
 # 设置启动命令
-CMD ["./server/bin/server"]
+CMD ["/app/server/bin/server"]

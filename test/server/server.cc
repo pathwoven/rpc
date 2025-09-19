@@ -28,8 +28,8 @@ private:
 
 int main(int argc, char** argv){
     // 初始化
-    if(argc == 0) RpcApplication::init("../config.yml");
-    else RpcApplication::init(argv[0]);
+    if(argc == 1) RpcApplication::init("../config.yml");
+    else RpcApplication::init(argv[1]);
 
     RpcServer stub;
     

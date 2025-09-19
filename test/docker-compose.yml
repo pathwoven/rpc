@@ -1,5 +1,3 @@
-version: "3.8"
-
 services:
   zookeeper1:
     image: zookeeper:3.7
@@ -48,7 +46,7 @@ services:
       - server_builder
     networks:
       rpc_net:
-        ipv4_address: 172.18.0.1
+        ipv4_address: 172.18.2.1
 
   server2:
     image: rpc_server_builder
@@ -60,7 +58,7 @@ services:
       - server_builder
     networks:
       rpc_net:
-        ipv4_address: 172.18.0.2
+        ipv4_address: 172.18.2.2
 
   client_builder:
     build:
