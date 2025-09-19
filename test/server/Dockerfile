@@ -40,7 +40,7 @@ COPY . .
 
 # 构建
 RUN rm -rf build && mkdir build && cd build && cmake .. && make VERBOSE=1
-RUN mv lib/* test/lib/
+RUN mkdir test/lib && mv lib/* test/lib/
 RUN cd test/server && rm -rf build && mkdir build && cd build && cmake .. && make VERBOSE=1
 
 # ------------

@@ -45,7 +45,7 @@ file(GLOB PROTO_FILES ${CMAKE_CURRENT_SOURCE_DIR}/../proto/*.cc)
 add_executable(server ${SRC_FILES} ${PROTO_FILES})
 
 # 链接
-target_link_libraries(server rpc ${LIBS})
+target_link_libraries(server rpc yaml-cpp ${LIBS})
 
 target_include_directories(server PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/../proto)
 

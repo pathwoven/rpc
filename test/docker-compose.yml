@@ -34,7 +34,7 @@ services:
   server_builder:
     build:
       context: ..
-      dockerfile: test2/server/Dockerfile
+      dockerfile: test/server/Dockerfile
     image: rpc_server_builder
     command: ["true"]  # 只是占位，防止启动
 
@@ -65,7 +65,7 @@ services:
   client_builder:
     build:
       context: ..
-      dockerfile: test2/client/Dockerfile
+      dockerfile: test/client/Dockerfile
     image: rpc_client_builder
     command: ["true"]  # 只是占位，防止启动
 

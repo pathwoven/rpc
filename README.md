@@ -16,3 +16,35 @@ mkdir build && cd build && cmake .. && make
 cd bin && ./server
 ./client
 ```
+
+## 使用docker部署测试
+- 进入test目录
+```
+cd test
+```
+- 构建基础镜像
+```
+docker compose build server_builder client_builder
+```
+- 运行docker-compose
+```
+docker compose up -d
+```
+### 配置docker代理（可选）
+> 该方法需要重启docker服务，如果有不想关闭的容器的话，可以去查找其他不需要重启的方法
+- 创建配置文件
+```shell
+sudo mkdir -p /etc/systemd/system/docker.service.d
+sudo nano /etc/systemd/system/docker.service.d/proxy.conf
+```
+- 写入（我的代理ip不能够用127.0.0.1，而是用网络设置里配置的ip）
+```
+[Service]
+Environment="HTTP_PROXY=http://<代理IP>:<代理端口>/"
+Environment="HTTPS_PROXY=http://<代理IP>:<代理端口>/"
+```
+- 重启
+```shell
+sudo systemctl daemon-reexec
+sudo systemctl restart docker
+```

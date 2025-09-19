@@ -15,7 +15,9 @@ RUN apt-get update && apt-get install -y\
 # 构建 Muduo
 RUN git clone https://github.com/chenshuo/muduo.git /tmp/muduo && \
     cd /tmp/muduo && \
-    ./build.sh && ./build.sh install
+    ./build.sh && ./build.sh install && \
+    cd /tmp/build/release-install-cpp11/include && mv muduo/ /usr/include/ && \
+    cd ../lib && mv * /usr/local/lib/
 
 # # 构建 yaml-cpp
 # RUN git clone https://github.com/jbeder/yaml-cpp.git && \
@@ -38,7 +40,7 @@ COPY . .
 
 # 构建
 RUN rm -rf build && mkdir build && cd build && cmake .. && make VERBOSE=1
-RUN mv lib/* test/lib/
+RUN mkdir test/lib && mv lib/* test/lib/
 RUN cd test/client && rm -rf build && mkdir build && cd build && cmake .. && make VERBOSE=1
 
 # ------------
