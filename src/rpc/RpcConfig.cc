@@ -9,3 +9,5 @@ void RpcConfig::loadFromFile(std::string path){
     }
     zookeeperAddr+=zookeeperNodes[zookeeperNodes.size()-1];
 }
+
+std::string RpcConfig::zookeeperAddr = "";

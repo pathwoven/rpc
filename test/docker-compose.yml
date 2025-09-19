@@ -1,4 +1,5 @@
-version: '3.9'
+version: "3.8"
+
 services:
   zookeeper1:
     image: zookeeper:3.7
@@ -29,41 +30,52 @@ services:
     networks:
       rpc_net:
         ipv4_address: 172.18.3.3
-
-  server1:
+  
+  server_builder:
     build:
       context: ..
-      dockerfile: test/server/Dockerfile
+      dockerfile: test2/server/Dockerfile
+    image: rpc_server_builder
+    command: ["true"]  # 只是占位，防止启动
+
+  server1:
+    image: rpc_server_builder
     container_name: rpc_server_1
     depends_on:
       - zookeeper1
       - zookeeper2
       - zookeeper3
+      - server_builder
     networks:
       rpc_net:
         ipv4_address: 172.18.0.1
 
   server2:
-    build:
-      context: ..
-      dockerfile: test/server/Dockerfile
+    image: rpc_server_builder
     container_name: rpc_server_2
     depends_on:
       - zookeeper1
       - zookeeper2
       - zookeeper3
+      - server_builder
     networks:
       rpc_net:
         ipv4_address: 172.18.0.2
 
-  client1:
+  client_builder:
     build:
       context: ..
-      dockerfile: test/client/Dockerfile
+      dockerfile: test2/client/Dockerfile
+    image: rpc_client_builder
+    command: ["true"]  # 只是占位，防止启动
+
+  client1:
+    image: rpc_client_builder
     container_name: rpc_client_1
     depends_on:
       - server1
       - server2
+      - client_builder
     environment:
       - ZK_HOST=zookeeper:2181
     stdin_open: true
@@ -73,13 +85,12 @@ services:
         ipv4_address: 172.18.1.1
 
   client2:
-    build:
-      context: ..
-      dockerfile: test/client/Dockerfile
+    image: rpc_client_builder
     container_name: rpc_client_2
     depends_on:
       - server1
       - server2
+      - client_builder
     environment:
       - ZK_HOST=zookeeper:2181
     stdin_open: true
@@ -90,13 +101,12 @@ services:
 
 
   client3:
-    build:
-      context: ..
-      dockerfile: test/client/Dockerfile
+    image: rpc_client_builder
     container_name: rpc_client_3
     depends_on:
       - server1
       - server2
+      - client_builder
     environment:
       - ZK_HOST=zookeeper:2181
     stdin_open: true

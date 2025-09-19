@@ -33,7 +33,9 @@ void sendRequest(RpcClient &rpcClient,int threadId, std::atomic<uint32_t>& succe
 
 int main(int argc, char** argv){
     // 初始化框架
-    RpcApplication::init(argc, argv);
+    if(argc == 0) RpcApplication::init("../config.yml");
+    else RpcApplication::init(argv[0]);
+    
     // 初始化客户端
     RpcClient rpcClient;
     Logger::Info("客户端开始运行");
