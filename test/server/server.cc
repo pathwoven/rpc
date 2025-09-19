@@ -1,5 +1,6 @@
 #include "Calculator.pb.h"
 #include "RpcApplication.h"
+#include "RpcConfig.h"
 #include "RpcServer.h"
 
 class CalculatorService:public MyService::Calculator{
@@ -30,6 +31,8 @@ int main(int argc, char** argv){
     // 初始化
     if(argc == 1) RpcApplication::init("../config.yml");
     else RpcApplication::init(argv[1]);
+
+    RpcConfig::serverAddr = std::getenv("MY_IP");
 
     RpcServer stub;
     

@@ -1,4 +1,5 @@
 #include "RpcServer.h"
+#include "RpcConfig.h"
 #include "Logger.h"
 
 void RpcServer::saveServiceInfo(google::protobuf::Service* service){
@@ -83,9 +84,9 @@ void RpcServer::SendMessage(cbCtx* cxt){
 
 // 启动节点
 void RpcServer::run(){
-    // todo 修改为从配置文件读入
-    std::string ip = "0.0.0.0";
-    int port = 8085;
+    size_t colonPos = RpcConfig::serverAddr.find(':');
+    std::string ip = RpcConfig::serverAddr.substr(0, colonPos);
+    int port = std::atoi(RpcConfig::serverAddr.substr(colonPos+1).c_str());
     std::string name = "Server";
 
     registerAllService(ip, port);

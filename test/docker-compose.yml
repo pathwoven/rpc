@@ -5,9 +5,14 @@ services:
     environment:
       - ZOO_MY_ID=1
       - ZOO_SERVERS=server.1=zookeeper1:2888:3888;2181 server.2=zookeeper2:2888:3888;2181 server.3=zookeeper3:2888:3888;2181
-    networks:
-      rpc_net:
-        ipv4_address: 172.18.3.1
+    networks: 
+      - rpc_net
+    # 用以保证zookeeper完全启动后再启动服务器
+    healthcheck:
+      test: ["CMD", "zkServer.sh", "status"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
 
   zookeeper2:
     image: zookeeper:3.9
@@ -15,9 +20,13 @@ services:
     environment:
       - ZOO_MY_ID=2
       - ZOO_SERVERS=server.1=zookeeper1:2888:3888;2181 server.2=zookeeper2:2888:3888;2181 server.3=zookeeper3:2888:3888;2181
-    networks:
-      rpc_net:
-        ipv4_address: 172.18.3.2
+    networks: 
+     - rpc_net
+    healthcheck:
+      test: ["CMD", "zkServer.sh", "status"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
 
   zookeeper3:
     image: zookeeper:3.9
@@ -25,9 +34,13 @@ services:
     environment:
       - ZOO_MY_ID=3
       - ZOO_SERVERS=server.1=zookeeper1:2888:3888;2181 server.2=zookeeper2:2888:3888;2181 server.3=zookeeper3:2888:3888;2181
-    networks:
-      rpc_net:
-        ipv4_address: 172.18.3.3
+    networks: 
+      - rpc_net
+    healthcheck:
+      test: ["CMD", "zkServer.sh", "status"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
   
   server_builder:
     build:
@@ -39,26 +52,32 @@ services:
   server1:
     image: rpc_server_builder
     container_name: rpc_server_1
+    environment:
+      - MY_IP=rpc_server_1
     depends_on:
-      - zookeeper1
-      - zookeeper2
-      - zookeeper3
-      - server_builder
-    networks:
-      rpc_net:
-        ipv4_address: 172.18.2.1
+      zookeeper1:
+        condition: service_healthy
+      zookeeper2:
+        condition: service_healthy
+      zookeeper3:
+        condition: service_healthy
+    networks: 
+      - rpc_net
 
   server2:
     image: rpc_server_builder
     container_name: rpc_server_2
+    environment:
+      - MY_IP=rpc_server_2
     depends_on:
-      - zookeeper1
-      - zookeeper2
-      - zookeeper3
-      - server_builder
-    networks:
-      rpc_net:
-        ipv4_address: 172.18.2.2
+      zookeeper1:
+        condition: service_healthy
+      zookeeper2:
+        condition: service_healthy
+      zookeeper3:
+        condition: service_healthy
+    networks: 
+      - rpc_net
 
   client_builder:
     build:
@@ -76,9 +95,8 @@ services:
       - client_builder
     stdin_open: true
     tty: true
-    networks:
-      rpc_net:
-        ipv4_address: 172.18.1.1
+    networks: 
+      - rpc_net
 
   client2:
     image: rpc_client_builder
@@ -89,9 +107,8 @@ services:
       - client_builder
     stdin_open: true
     tty: true
-    networks:
-      rpc_net:
-        ipv4_address: 172.18.1.2
+    networks: 
+      - rpc_net
 
 
   client3:
@@ -103,9 +120,8 @@ services:
       - client_builder
     stdin_open: true
     tty: true
-    networks:
-        rpc_net:
-          ipv4_address: 172.18.1.3
+    networks: 
+      - rpc_net
 
 
 networks:

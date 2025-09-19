@@ -8,6 +8,7 @@ class RpcConfig{
 public:
     static void loadFromFile(std::string file);
     static std::string zookeeperAddr;
+    static std::string serverAddr;
 };
 
 #endif  // RPC_CONFIG_H
